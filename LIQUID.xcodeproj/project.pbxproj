@@ -11,6 +11,15 @@
 		D59EDF6C27D6AB7700F6C937 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF6B27D6AB7700F6C937 /* ContentView.swift */; };
 		D59EDF6E27D6AB7800F6C937 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D59EDF6D27D6AB7800F6C937 /* Assets.xcassets */; };
 		D59EDF7127D6AB7800F6C937 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D59EDF7027D6AB7800F6C937 /* Preview Assets.xcassets */; };
+		D59EDF7927D6ABD800F6C937 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF7827D6ABD800F6C937 /* Transaction.swift */; };
+		D59EDF7B27D6ABE700F6C937 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF7A27D6ABE700F6C937 /* Day.swift */; };
+		D59EDF7E27D6ACC900F6C937 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF7D27D6ACC900F6C937 /* Model.swift */; };
+		D59EDF8627D6B3EB00F6C937 /* TransactionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF8527D6B3EB00F6C937 /* TransactionRow.swift */; };
+		D59EDF8827D6B41000F6C937 /* TransactionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF8727D6B41000F6C937 /* TransactionDetail.swift */; };
+		D59EDF8B27D6B6A300F6C937 /* JournalTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF8A27D6B6A300F6C937 /* JournalTab.swift */; };
+		D59EDF8D27D6B6CC00F6C937 /* HomeTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF8C27D6B6CC00F6C937 /* HomeTab.swift */; };
+		D59EDF9027D6B6E300F6C937 /* SettingsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF8F27D6B6E300F6C937 /* SettingsTab.swift */; };
+		D59EDF9527D6B91400F6C937 /* AddTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF9427D6B91400F6C937 /* AddTransaction.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +28,15 @@
 		D59EDF6B27D6AB7700F6C937 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D59EDF6D27D6AB7800F6C937 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D59EDF7027D6AB7800F6C937 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D59EDF7827D6ABD800F6C937 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
+		D59EDF7A27D6ABE700F6C937 /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
+		D59EDF7D27D6ACC900F6C937 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		D59EDF8527D6B3EB00F6C937 /* TransactionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionRow.swift; sourceTree = "<group>"; };
+		D59EDF8727D6B41000F6C937 /* TransactionDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.swift; sourceTree = "<group>"; };
+		D59EDF8A27D6B6A300F6C937 /* JournalTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalTab.swift; sourceTree = "<group>"; };
+		D59EDF8C27D6B6CC00F6C937 /* HomeTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTab.swift; sourceTree = "<group>"; };
+		D59EDF8F27D6B6E300F6C937 /* SettingsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTab.swift; sourceTree = "<group>"; };
+		D59EDF9427D6B91400F6C937 /* AddTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransaction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +71,9 @@
 			children = (
 				D59EDF6927D6AB7700F6C937 /* LIQUIDApp.swift */,
 				D59EDF6B27D6AB7700F6C937 /* ContentView.swift */,
+				D59EDF7C27D6ACB000F6C937 /* TransactionModel */,
+				D59EDF7727D6ABC900F6C937 /* Objects */,
+				D59EDF8927D6B69600F6C937 /* Tabs */,
 				D59EDF6D27D6AB7800F6C937 /* Assets.xcassets */,
 				D59EDF6F27D6AB7800F6C937 /* Preview Content */,
 			);
@@ -65,6 +86,68 @@
 				D59EDF7027D6AB7800F6C937 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		D59EDF7727D6ABC900F6C937 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				D59EDF7827D6ABD800F6C937 /* Transaction.swift */,
+				D59EDF7A27D6ABE700F6C937 /* Day.swift */,
+			);
+			path = Objects;
+			sourceTree = "<group>";
+		};
+		D59EDF7C27D6ACB000F6C937 /* TransactionModel */ = {
+			isa = PBXGroup;
+			children = (
+				D59EDF7D27D6ACC900F6C937 /* Model.swift */,
+			);
+			path = TransactionModel;
+			sourceTree = "<group>";
+		};
+		D59EDF8227D6B3BF00F6C937 /* TransactionViews */ = {
+			isa = PBXGroup;
+			children = (
+				D59EDF8527D6B3EB00F6C937 /* TransactionRow.swift */,
+				D59EDF9427D6B91400F6C937 /* AddTransaction.swift */,
+				D59EDF8727D6B41000F6C937 /* TransactionDetail.swift */,
+			);
+			path = TransactionViews;
+			sourceTree = "<group>";
+		};
+		D59EDF8927D6B69600F6C937 /* Tabs */ = {
+			isa = PBXGroup;
+			children = (
+				D59EDF9327D6B71500F6C937 /* HomeTab */,
+				D59EDF9227D6B70B00F6C937 /* SettingsTab */,
+				D59EDF9127D6B6F600F6C937 /* JournalTab */,
+			);
+			path = Tabs;
+			sourceTree = "<group>";
+		};
+		D59EDF9127D6B6F600F6C937 /* JournalTab */ = {
+			isa = PBXGroup;
+			children = (
+				D59EDF8A27D6B6A300F6C937 /* JournalTab.swift */,
+				D59EDF8227D6B3BF00F6C937 /* TransactionViews */,
+			);
+			path = JournalTab;
+			sourceTree = "<group>";
+		};
+		D59EDF9227D6B70B00F6C937 /* SettingsTab */ = {
+			isa = PBXGroup;
+			children = (
+				D59EDF8F27D6B6E300F6C937 /* SettingsTab.swift */,
+			);
+			path = SettingsTab;
+			sourceTree = "<group>";
+		};
+		D59EDF9327D6B71500F6C937 /* HomeTab */ = {
+			isa = PBXGroup;
+			children = (
+				D59EDF8C27D6B6CC00F6C937 /* HomeTab.swift */,
+			);
+			path = HomeTab;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,8 +220,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D59EDF8827D6B41000F6C937 /* TransactionDetail.swift in Sources */,
+				D59EDF7E27D6ACC900F6C937 /* Model.swift in Sources */,
+				D59EDF9527D6B91400F6C937 /* AddTransaction.swift in Sources */,
+				D59EDF9027D6B6E300F6C937 /* SettingsTab.swift in Sources */,
 				D59EDF6C27D6AB7700F6C937 /* ContentView.swift in Sources */,
 				D59EDF6A27D6AB7700F6C937 /* LIQUIDApp.swift in Sources */,
+				D59EDF8627D6B3EB00F6C937 /* TransactionRow.swift in Sources */,
+				D59EDF8B27D6B6A300F6C937 /* JournalTab.swift in Sources */,
+				D59EDF8D27D6B6CC00F6C937 /* HomeTab.swift in Sources */,
+				D59EDF7B27D6ABE700F6C937 /* Day.swift in Sources */,
+				D59EDF7927D6ABD800F6C937 /* Transaction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
