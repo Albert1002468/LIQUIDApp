@@ -8,35 +8,34 @@
 import SwiftUI
 
 struct TransactionRow: View {
-    let transaction: Transaction
+    let transaction: filteredTransaction
 
     var body: some View {
         HStack {
             VStack (alignment: .leading) {
                 Text(transaction.description)
                     .font(.headline)
+                    .lineLimit(1)
                 Text(transaction.category)
                     .font(.footnote)
+                    .lineLimit(1)
             }
             Spacer()
-            VStack(alignment: .trailing) {
                 HStack {
-                    if transaction.type == 1 {
+                    if transaction.type != "Income" {
                         Text("-")
                     }
-                    Text(transaction.amount, format: .currency(code: "USD"))
-                        .foregroundColor(transaction.type == 0 ? .green : .black)
+                    Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
+                        .foregroundColor(transaction.type == "Income" ? .green : .black)
                 }
-                Text(transaction.formatDate(date: transaction.date, type: ""))
-                    .font(.footnote)
-                
-            }
+               // Text(transaction.formatDate(date: transaction.date, type: ""))
+                //    .font(.footnote)
         }
     }
 }
 
 struct TransactionRow_Previews: PreviewProvider {
     static var previews: some View {
-        TransactionRow(transaction: testTransaction)
+        TransactionRow(transaction: testFilteredTransaction)
     }
 }

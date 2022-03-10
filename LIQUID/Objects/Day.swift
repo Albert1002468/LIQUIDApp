@@ -9,17 +9,24 @@ import Foundation
 
 struct Day: Identifiable, Codable {
     var id = UUID()
-    let date: Date
+    var date: Date
     var transactionsOfMonth: [Transaction]
     
-    func formatDate(date: Date, type: String) -> String {
+    func formatDate(date: Date) -> String {
         let dateFormatter = DateFormatter()
-        if type == "monthyear" {
-            dateFormatter.setLocalizedDateFormatFromTemplate("MMMM yyyy")
-        }
-        else {
             dateFormatter.setLocalizedDateFormatFromTemplate("MMMM dd, yyyy")
-        }
+        return dateFormatter.string(from: date)
+    }
+}
+
+struct filteredDay: Identifiable, Codable {
+    var id: String
+    var date: Date
+    var transactionsOfMonth: [filteredTransaction]
+    
+    func formatDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+            dateFormatter.setLocalizedDateFormatFromTemplate("MMMM dd, yyyy")
         return dateFormatter.string(from: date)
     }
 }
