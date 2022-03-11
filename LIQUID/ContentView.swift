@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+    @ObservedObject var transactionData = TransactionModel()
     @State private var selection = 2
     var body: some View {
         ZStack{
             LinearGradient(gradient: Gradient(colors: [Color("AccentColor"), Color(UIColor.systemBackground)]), startPoint: .bottom, endPoint: .top)
                 .ignoresSafeArea()
             TabView(selection: $selection){
-                JournalTab()
+                JournalTab(transactionData: transactionData)
                     .tabItem {
                         Text("Journal")
                         Image(systemName: "book.fill")
                     }.tag(1)
-                HomeTab()
+                HomeTab(transactionData: transactionData)
                     .tabItem {
                         Text("Home")
                         Image(systemName: "house.fill")

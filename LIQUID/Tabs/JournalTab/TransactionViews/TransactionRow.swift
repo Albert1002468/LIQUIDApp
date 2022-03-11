@@ -28,8 +28,6 @@ struct TransactionRow: View {
                     Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
                         .foregroundColor(transaction.type == "Income" ? .green : .black)
                 }
-               // Text(transaction.formatDate(date: transaction.date, type: ""))
-                //    .font(.footnote)
         }
     }
 }

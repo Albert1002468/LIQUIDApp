@@ -25,11 +25,12 @@ struct AddTransaction: View {
     @State var note = ""
     @State var desc = ""
     @State var typeIndex = 0
+    @State var categoryIndex = 0
     var body: some View {
         NavigationView {
             Form {
                 TextField("Enter amount", value: self.$amount, formatter: formatter)
-                    .keyboardType(.numberPad)
+                    .keyboardType(.decimalPad)
                     .font(.title)
                     .multilineTextAlignment(.center)
                     .foregroundColor(typeIndex == 0 ? .green : .black)
@@ -52,8 +53,18 @@ struct AddTransaction: View {
                 }
                 
                 Section {
-                    Text("Category")
-                    TextField("Enter Category", text: $cat)
+                    Picker(selection: $categoryIndex, label: Text("Select Category")) {
+                        if (typeIndex == 0) {
+                            ForEach(0..<transactionData.categoryIncomeArray.count){
+                                Text(transactionData.categoryIncomeArray[$0])
+                            }
+                        }
+                        else {
+                            ForEach(0..<transactionData.categoryExpenseArray.count){
+                                Text(transactionData.categoryExpenseArray[$0])
+                            }
+                        }
+                    }
                 }
                 
                 Section {
@@ -68,7 +79,6 @@ struct AddTransaction: View {
                 Button("Save") {
                     AddNewTransaction()
                     transactionData.sortSections()
-                    //added this
                     transactionData.filterSections(searchText: "")
                     dismiss()
                 }
@@ -77,23 +87,27 @@ struct AddTransaction: View {
     }
     
     func AddNewTransaction() {
-
+        
         var index = 0
         var found = false
         for arrayDate in transactionData.sections
         {
             if arrayDate.formatDate(date: arrayDate.date) == arrayDate.formatDate(date: date) {
-             found = true
-        break
-        }
+                found = true
+                break
+            }
             index += 1
         }
-        if (typeIndex != 0) {
-            type = "Expense"
+        type = paymentTypeArray[typeIndex]
+        if typeIndex == 0 {
+            cat = transactionData.categoryIncomeArray[categoryIndex]
+        }
+        else {
+            cat = transactionData.categoryExpenseArray[categoryIndex]
         }
         let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: amount)
         if found == true {
-        transactionData.sections[index].transactionsOfMonth.append(singleTransaction)
+            transactionData.sections[index].transactionsOfMonth.append(singleTransaction)
         }
         else {
             transactionData.sections.append(Day(date: date, transactionsOfMonth: [singleTransaction]))

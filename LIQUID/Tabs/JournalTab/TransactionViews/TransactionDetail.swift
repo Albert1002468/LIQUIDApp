@@ -20,6 +20,7 @@ struct TransactionDetail: View {
     @State var desc: String
     @State var searchText: String
     @State var typeIndex: Int
+    @State var categoryIndex: Int
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
@@ -30,7 +31,7 @@ struct TransactionDetail: View {
     var body: some View {
         Form {
             TextField("Enter amount", value: $amount, formatter: formatter)
-                .keyboardType(.numberPad)
+                .keyboardType(.decimalPad)
                 .font(.title)
                 .multilineTextAlignment(.center)
                 .foregroundColor(typeIndex == 0 ? .green : .black)
@@ -53,8 +54,18 @@ struct TransactionDetail: View {
             }
             
             Section {
-                Text("Category")
-                TextField("Enter Category", text: $cat)
+                Picker(selection: $categoryIndex, label: Text("Select Category")) {
+                    if (typeIndex == 0) {
+                        ForEach(0..<transactionData.categoryIncomeArray.count){
+                            Text(transactionData.categoryIncomeArray[$0])
+                        }
+                    }
+                    else {
+                        ForEach(0..<transactionData.categoryExpenseArray.count){
+                            Text(transactionData.categoryExpenseArray[$0])
+                        }
+                    }
+                }
             }
             
             Section {
@@ -64,7 +75,6 @@ struct TransactionDetail: View {
             
             Button("Permanently Delete") {
                 deleteTransaction()
-                //added this
                 transactionData.filterSections(searchText: searchText)
                 dismiss()
             }
@@ -74,29 +84,34 @@ struct TransactionDetail: View {
         .navigationTitle("Transaction Details")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: Button(action: {
-            UpdateTransaction()
-            transactionData.sortSections()
-                //added this
-            transactionData.filterSections(searchText: searchText)
-            dismiss()
-        }){
-            HStack (spacing: 5){
-                Image(systemName: "chevron.left")
-                Text("Back")
-                    .font(.headline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    UpdateTransaction()
+                    transactionData.sortSections()
+                    transactionData.filterSections(searchText: searchText)
+                    dismiss()
+                }) {
+                    HStack (spacing: 5){
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                            .font(.headline)
+                    }
+                }
             }
-        })
+        }
     }
     func UpdateTransaction() {
         
         var index = 0
         var found = false
-        if (typeIndex != 0) {
-            type = "Expense"
+
+        type = paymentTypeArray[typeIndex]
+        if typeIndex == 0 {
+            cat = transactionData.categoryIncomeArray[categoryIndex]
         }
         else {
-            type = "Income"
+            cat = transactionData.categoryExpenseArray[categoryIndex]
         }
         let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: amount)
         if transaction.formatDate(date: date) != transaction.formatDate(date: transaction.date) {
@@ -152,6 +167,6 @@ struct TransactionDetail: View {
 struct TransactionDetail_Previews: PreviewProvider {
     @State static var testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400)
     static var previews: some View {
-        TransactionDetail(transaction: testTransaction, transactionData: TransactionModel(), amount: testTransaction.amount, type: testTransaction.type, date: testTransaction.date, cat: testTransaction.category, note: testTransaction.notes, desc: testTransaction.description, searchText: "", typeIndex: 0)
+        TransactionDetail(transaction: testTransaction, transactionData: TransactionModel(), amount: testTransaction.amount, type: testTransaction.type, date: testTransaction.date, cat: testTransaction.category, note: testTransaction.notes, desc: testTransaction.description, searchText: "", typeIndex: 0, categoryIndex: 0)
     }
 }
