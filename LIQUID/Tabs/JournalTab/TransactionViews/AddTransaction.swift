@@ -29,17 +29,18 @@ struct AddTransaction: View {
     var body: some View {
         NavigationView {
             Form {
-                TextField("Enter amount", value: self.$amount, formatter: formatter)
+                TextField("Enter amount", value: $amount, formatter: formatter)
                     .keyboardType(.decimalPad)
                     .font(.title)
                     .multilineTextAlignment(.center)
                     .foregroundColor(typeIndex == 0 ? .green : .black)
                 
                 Section {
-                    Picker(selection: self.$typeIndex, label: Text("Select Transaction Type")) {
+                    Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
                         ForEach(0..<paymentTypeArray.count) {
                             Text(paymentTypeArray[$0])
                         }
+                    }.onChange(of: typeIndex) { _ in
                     }
                 }
                 
@@ -53,15 +54,28 @@ struct AddTransaction: View {
                 }
                 
                 Section {
-                    Picker(selection: $categoryIndex, label: Text("Select Category")) {
+                    NavigationLink(destination: Category(transactionData: transactionData, typeIndex: typeIndex, categoryIndex: $categoryIndex)) {
                         if (typeIndex == 0) {
-                            ForEach(0..<transactionData.categoryIncomeArray.count){
-                                Text(transactionData.categoryIncomeArray[$0])
+                            HStack {
+                                Text("Select Income Category")
+                                Spacer()
+                                if (transactionData.categoryIncomeArray.indices.contains(categoryIndex )) {
+                                    Text(transactionData.categoryIncomeArray[categoryIndex ])
+                                    .foregroundColor(.gray)
+                                } else {
+                                    Text(transactionData.categoryIncomeArray[0])
+                                }
                             }
-                        }
-                        else {
-                            ForEach(0..<transactionData.categoryExpenseArray.count){
-                                Text(transactionData.categoryExpenseArray[$0])
+                        } else {
+                            HStack {
+                                Text("Select Expense Category")
+                                Spacer()
+                                if (transactionData.categoryExpenseArray.indices.contains(categoryIndex )) {
+                                    Text(transactionData.categoryExpenseArray[categoryIndex ])
+                                    .foregroundColor(.gray)
+                                } else {
+                                    Text(transactionData.categoryExpenseArray[0])
+                                }
                             }
                         }
                     }
@@ -76,12 +90,14 @@ struct AddTransaction: View {
             .navigationTitle("Add Transaction")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                Button("Save") {
+                Button(action: {
                     AddNewTransaction()
                     transactionData.sortSections()
                     transactionData.filterSections(searchText: "")
                     dismiss()
-                }
+                }) {
+                    Text("Save")
+                }.disabled(desc.isEmpty)
             }
         }
     }
@@ -100,10 +116,18 @@ struct AddTransaction: View {
         }
         type = paymentTypeArray[typeIndex]
         if typeIndex == 0 {
-            cat = transactionData.categoryIncomeArray[categoryIndex]
+            if (transactionData.categoryIncomeArray.count > categoryIndex ) {
+                cat = transactionData.categoryIncomeArray[categoryIndex ]
+            } else {
+                cat = transactionData.categoryIncomeArray[0]
+            }
         }
         else {
-            cat = transactionData.categoryExpenseArray[categoryIndex]
+            if (transactionData.categoryExpenseArray.count > categoryIndex ) {
+                cat = transactionData.categoryExpenseArray[categoryIndex ]
+            } else {
+                cat = transactionData.categoryExpenseArray[0]
+            }
         }
         let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: amount)
         if found == true {

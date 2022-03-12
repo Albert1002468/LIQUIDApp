@@ -11,9 +11,21 @@ import SwiftUI
 
 class TransactionModel: ObservableObject {
     @Published var slices: [PieSlice] = []
-    @Published var colors = [Color.blue, Color.green, Color.orange, Color.pink]
-    @Published var categoryExpenseArray = ["Food", "Fuel", "Apparel", "Other"]
-    @Published var categoryIncomeArray = ["Direct Deposit", "Cash","Check"]
+    @Published var colors = [Color.blue, Color.green, Color.orange, Color.pink, Color.brown, Color.cyan, Color.mint, Color.purple]
+    @Published var categoryExpenseArray = [String]() {
+        didSet {
+            if let encoded = try? JSONEncoder().encode(categoryExpenseArray) {
+                UserDefaults.standard.set(encoded, forKey: "categoryExpenseArray")
+            }
+        }
+    }
+    @Published var categoryIncomeArray = [String] () {
+        didSet {
+            if let encoded = try? JSONEncoder().encode(categoryExpenseArray) {
+                UserDefaults.standard.set(encoded, forKey: "categoryExpenseArray")
+            }
+        }
+    }
     @Published var filteredCategoryExpenseArray: [String] = []
     @Published var categoryExpenseValues: [Double] = []
     @Published var categoryIncomeValues: [Double] = []
@@ -33,10 +45,26 @@ class TransactionModel: ObservableObject {
                 updateCategoryValues()
                 getSlices()
                 filterSections(searchText: "")
-                return
             }
-        }
+        } else {
         sections = []
+        }
+        
+        if let savedSections = UserDefaults.standard.data(forKey: "categoryExpenseArray") {
+            if let decodedSections = try? JSONDecoder().decode([String].self, from: savedSections) {
+                categoryExpenseArray = decodedSections
+            }
+        } else {
+        categoryExpenseArray = ["Food", "Fuel", "Apparel", "Other"]
+        }
+        
+        if let savedSections = UserDefaults.standard.data(forKey: "categoryIncomeArray") {
+            if let decodedSections = try? JSONDecoder().decode([String].self, from: savedSections) {
+                categoryIncomeArray = decodedSections
+            }
+        } else {
+        categoryIncomeArray = ["Direct Deposit", "Cash","Check"]
+        }
     }
     
     

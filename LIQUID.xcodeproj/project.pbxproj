@@ -24,6 +24,8 @@
 		D5DD122227DA74D200E1FF08 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD122127DA74D200E1FF08 /* PieChartView.swift */; };
 		D5DD122427DB08D600E1FF08 /* PieChartRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD122327DB08D600E1FF08 /* PieChartRow.swift */; };
 		D5DD122627DBBD9900E1FF08 /* PieSlice.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD122527DBBD9900E1FF08 /* PieSlice.swift */; };
+		D5DD122A27DC5B0400E1FF08 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD122927DC5B0400E1FF08 /* Category.swift */; };
+		D5DD122C27DC7B9500E1FF08 /* AddNewCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD122B27DC7B9500E1FF08 /* AddNewCategory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +47,8 @@
 		D5DD122127DA74D200E1FF08 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 		D5DD122327DB08D600E1FF08 /* PieChartRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartRow.swift; sourceTree = "<group>"; };
 		D5DD122527DBBD9900E1FF08 /* PieSlice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieSlice.swift; sourceTree = "<group>"; };
+		D5DD122927DC5B0400E1FF08 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		D5DD122B27DC7B9500E1FF08 /* AddNewCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewCategory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +124,8 @@
 				D59EDF8527D6B3EB00F6C937 /* TransactionRow.swift */,
 				D59EDF9427D6B91400F6C937 /* AddTransaction.swift */,
 				D59EDF8727D6B41000F6C937 /* TransactionDetail.swift */,
+				D5DD122927DC5B0400E1FF08 /* Category.swift */,
+				D5DD122B27DC7B9500E1FF08 /* AddNewCategory.swift */,
 			);
 			path = TransactionViews;
 			sourceTree = "<group>";
@@ -241,12 +247,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				D59EDF8827D6B41000F6C937 /* TransactionDetail.swift in Sources */,
+				D5DD122C27DC7B9500E1FF08 /* AddNewCategory.swift in Sources */,
 				D59EDF7E27D6ACC900F6C937 /* Model.swift in Sources */,
 				D5DD122227DA74D200E1FF08 /* PieChartView.swift in Sources */,
 				D5DD122027DA705B00E1FF08 /* PieSliceView.swift in Sources */,
 				D59EDF9527D6B91400F6C937 /* AddTransaction.swift in Sources */,
 				D59EDF9027D6B6E300F6C937 /* SettingsTab.swift in Sources */,
 				D5DD122427DB08D600E1FF08 /* PieChartRow.swift in Sources */,
+				D5DD122A27DC5B0400E1FF08 /* Category.swift in Sources */,
 				D59EDF6C27D6AB7700F6C937 /* ContentView.swift in Sources */,
 				D59EDF6A27D6AB7700F6C937 /* LIQUIDApp.swift in Sources */,
 				D59EDF8627D6B3EB00F6C937 /* TransactionRow.swift in Sources */,
