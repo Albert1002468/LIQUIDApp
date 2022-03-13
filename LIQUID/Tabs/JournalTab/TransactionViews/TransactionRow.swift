@@ -24,9 +24,11 @@ struct TransactionRow: View {
                 HStack {
                     if transaction.type != "Income" {
                         Text("-")
+                        Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
+                    } else {
+                        Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
+                            .foregroundColor(.green)
                     }
-                    Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
-                        .foregroundColor(transaction.type == "Income" ? .green : .black)
                 }
         }
     }

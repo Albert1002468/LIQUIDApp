@@ -29,91 +29,108 @@ struct TransactionDetail: View {
         return formatter
     }()
     var body: some View {
-        Form {
-            TextField("Enter amount", value: $amount, formatter: formatter)
-                .keyboardType(.decimalPad)
-                .font(.title)
-                .multilineTextAlignment(.center)
-                .foregroundColor(typeIndex == 0 ? .green : .black)
+        ZStack {
+            Color.blue
+                .opacity(0.1)
+                .ignoresSafeArea()
             
-            Section {
-                Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
-                    ForEach(0..<paymentTypeArray.count) {
-                        Text(paymentTypeArray[$0])
-                    }
-                }.onChange(of: typeIndex) { _ in
-                    categoryIndex = 0
-                }
-            }
-            
-            Section {
-                Text("Description")
-                TextField("Enter Description", text: $desc)
-            }
-            
-            Section {
-                DatePicker("Date", selection: $date, displayedComponents: .date)
-            }
-            
-            Section {
-                NavigationLink(destination: Category(transactionData: transactionData, typeIndex: typeIndex, categoryIndex: $categoryIndex)) {
+               // Rectangle()
+               //     .fill(Color.clear)
+                //    .frame(height: 10)
+                //    .background(LinearGradient(colors: [.green.opacity(0.3), .blue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                
+                Form {
                     if (typeIndex == 0) {
-                        HStack {
-                            Text("Select Income Category")
-                            Spacer()
-                            if (transactionData.categoryIncomeArray.indices.contains(categoryIndex )) {
-                                Text(transactionData.categoryIncomeArray[categoryIndex ])
-                                .foregroundColor(.gray)
-                            } else {
-                                Text(transactionData.categoryIncomeArray[0])
-                            }
-                        }
+                        TextField("Enter amount", value: $amount, formatter: formatter)
+                            .keyboardType(.decimalPad)
+                            .font(.title)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.green)
                     } else {
-                        HStack {
-                            Text("Select Expense Category")
-                            Spacer()
-                            if (transactionData.categoryExpenseArray.indices.contains(categoryIndex )) {
-                                Text(transactionData.categoryExpenseArray[categoryIndex ])
-                                .foregroundColor(.gray)
+                        TextField("Enter amount", value: $amount, formatter: formatter)
+                            .keyboardType(.decimalPad)
+                            .font(.title)
+                            .multilineTextAlignment(.center)
+                    }
+                    
+                    Section {
+                        Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
+                            ForEach(0..<paymentTypeArray.count) {
+                                Text(paymentTypeArray[$0])
+                            }
+                        }.onChange(of: typeIndex) { _ in
+                            categoryIndex = 0
+                        }
+                    }
+                    
+                    Section {
+                        Text("Description")
+                        TextField("Enter Description", text: $desc)
+                    }
+                    
+                    Section {
+                        DatePicker("Date", selection: $date, displayedComponents: .date)
+                    }
+                    
+                    Section {
+                        NavigationLink(destination: Category(transactionData: transactionData, typeIndex: typeIndex, categoryIndex: $categoryIndex)) {
+                            if (typeIndex == 0) {
+                                HStack {
+                                    Text("Select Income Category")
+                                    Spacer()
+                                    if (transactionData.categoryIncomeArray.indices.contains(categoryIndex )) {
+                                        Text(transactionData.categoryIncomeArray[categoryIndex ])
+                                            .foregroundColor(.gray)
+                                    } else {
+                                        Text(transactionData.categoryIncomeArray[0])
+                                    }
+                                }
                             } else {
-                                Text(transactionData.categoryExpenseArray[0])
+                                HStack {
+                                    Text("Select Expense Category")
+                                    Spacer()
+                                    if (transactionData.categoryExpenseArray.indices.contains(categoryIndex )) {
+                                        Text(transactionData.categoryExpenseArray[categoryIndex ])
+                                            .foregroundColor(.gray)
+                                    } else {
+                                        Text(transactionData.categoryExpenseArray[0])
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-            
-            
-            Section {
-                Text("Notes")
-                TextField("Enter Note", text: $note)
-            }
-            
-            Button("Permanently Delete") {
-                deleteTransaction()
-                transactionData.filterSections(searchText: searchText)
-                dismiss()
-            }
-            
-            .navigationTitle("Transaction Details")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        UpdateTransaction()
-                        transactionData.sortSections()
+                    
+                    Section {
+                        Text("Notes")
+                        TextField("Enter Note", text: $note)
+                    }
+                    
+                    Button("Permanently Delete") {
+                        deleteTransaction()
                         transactionData.filterSections(searchText: searchText)
                         dismiss()
-                    }) {
-                        HStack (spacing: 5){
-                            Image(systemName: "chevron.left")
-                            Text("Back")
-                                .font(.headline)
+                    }
+                    .navigationTitle("Transaction Details")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarBackButtonHidden(true)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button(action: {
+                                UpdateTransaction()
+                                transactionData.sortSections()
+                                transactionData.filterSections(searchText: searchText)
+                                dismiss()
+                            }) {
+                                HStack (spacing: 5){
+                                    Image(systemName: "chevron.left")
+                                        .font(Font.system(.body).bold())
+                                    Text("Back")
+                                }
+                            }.disabled(desc.isEmpty)
                         }
-                    }.disabled(desc.isEmpty)
+                    }
                 }
-            }
+            
         }
     }
     func UpdateTransaction() {

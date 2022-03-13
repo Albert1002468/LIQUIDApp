@@ -15,12 +15,11 @@ struct PieSliceView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                let width: CGFloat = min(geometry.size.width, geometry.size.height)
+                let height = width
+                
+                let center = CGPoint(x: width * 0.5, y: height * 0.5)
                 Path { path in
-                    let width: CGFloat = min(geometry.size.width, geometry.size.height)
-                    let height = width
-                    
-                    let center = CGPoint(x: width * 0.5, y: height * 0.5)
-                    
                     path.move(to: center)
                     
                     path.addArc(
@@ -33,12 +32,16 @@ struct PieSliceView: View {
                 }
                 .fill(pieSlice.color)
                 
-                Text(pieSlice.text)
-                    .position(
-                        x: geometry.size.width * 0.5 * CGFloat(1.0 + 0.78 * cos(self.midRadians)),
-                        y: geometry.size.height * 0.5 * CGFloat(1.0 - 0.78 * sin(self.midRadians))
-                    )
-                    .foregroundColor(Color.black)
+                // .border(pieSlice.color.brightness(-0.5), width: 4)
+                if (pieSlice.endAngle-pieSlice.startAngle > Angle(degrees: 10.12)) {
+                    Text(pieSlice.text)
+                        .position (
+                            x: geometry.size.width * 0.5 * CGFloat(1.0 + 0.78 * cos(self.midRadians)),
+                            y: geometry.size.height * 0.5 * CGFloat(1.0 - 0.78 * sin(self.midRadians))
+                        )
+                        .foregroundColor(Color.black)
+                        .font(Font.system(size: 12, weight: .semibold))
+                }
             }
         }
         .aspectRatio(1, contentMode: .fit)    }

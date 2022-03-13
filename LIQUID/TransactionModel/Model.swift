@@ -11,7 +11,7 @@ import SwiftUI
 
 class TransactionModel: ObservableObject {
     @Published var slices: [PieSlice] = []
-    @Published var colors = [Color.blue, Color.green, Color.orange, Color.pink, Color.brown, Color.cyan, Color.mint, Color.purple]
+    @Published var colors = [Color.blue, Color.yellow, Color.orange, Color.pink, Color.brown, Color.cyan, Color.mint, Color.purple]
     @Published var categoryExpenseArray = [String]() {
         didSet {
             if let encoded = try? JSONEncoder().encode(categoryExpenseArray) {
@@ -191,7 +191,12 @@ class TransactionModel: ObservableObject {
     
     func getSlices() {
         slices = []
-        let sum = categoryExpenseValues.reduce(0, +)
+        var sum = 0.0
+        if categoryIncomeValues.reduce(0, +) >= categoryExpenseValues.reduce(0, +) {
+            sum = categoryIncomeValues.reduce(0, +)
+        } else {
+            sum = categoryExpenseValues.reduce(0, +)
+        }
         var endDeg: Double = 0
         for (i, value) in categoryExpenseValues.enumerated() {
             let degrees: Double = value * 360 / sum

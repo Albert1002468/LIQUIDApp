@@ -14,32 +14,46 @@ struct JournalTab: View {
     @State var paymentTypeArray = ["Income", "Expense"]
     var body: some View {
         NavigationView {
-            List {
-                ForEach (transactionData.filteredSections) { section in
-                    Section(header: Text(transactionData.formatDate(date: section.date, type: ""))) {
-                        ForEach(section.transactionsOfMonth) { transaction in
-                            NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: Double(transaction.amount) ?? 0.0, type: transaction.type, date: transaction.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, typeIndex: findTransactionType(type: transaction.type), categoryIndex: findCategory(type: transaction.type, category: transaction.category))) {
-                                TransactionRow(transaction: transaction)
+            ZStack {
+                Color.blue
+                    .opacity(0.1)
+                    .ignoresSafeArea()
+                
+                VStack {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 10)
+                        .background(LinearGradient(colors: [.green.opacity(0.3), .blue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    List {
+                        ForEach (transactionData.filteredSections) { section in
+                            Section(header: Text(transactionData.formatDate(date: section.date, type: ""))) {
+                                ForEach(section.transactionsOfMonth) { transaction in
+                                    NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: Double(transaction.amount) ?? 0.0, type: transaction.type, date: transaction.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, typeIndex: findTransactionType(type: transaction.type), categoryIndex: findCategory(type: transaction.type, category: transaction.category))) {
+                                        TransactionRow(transaction: transaction)
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
-            .navigationTitle("All Transactions")
-            .searchable(text: $searchText)
-            .onChange(of: searchText) { searchText in
-                transactionData.filterSections(searchText: searchText)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        self.openAddTransactions.toggle()
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                    }.sheet(isPresented: $openAddTransactions, content: {
-                        AddTransaction(transactionData: transactionData)
-                    } )
+                .navigationViewStyle(.automatic)
+                .navigationTitle("All Transactions")
+                .searchable(text: $searchText)
+                .onChange(of: searchText) { searchText in
+                    transactionData.filterSections(searchText: searchText)
                 }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            self.openAddTransactions.toggle()
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                        }.sheet(isPresented: $openAddTransactions, content: {
+                            AddTransaction(transactionData: transactionData)
+                        } )
+                    }
+                }
+                
             }
         }
     }
