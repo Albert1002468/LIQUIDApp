@@ -10,93 +10,93 @@ import SwiftUI
 struct Category: View {
     @ObservedObject var transactionData: TransactionModel
     @State var typeIndex: Int
-    @Binding var categoryIndex: Int
+    @Binding var category: String
     @Environment(\.dismiss) private var dismiss
     @State var tempIncomeArray: [String] = []
     @State var tempExpenseArray:  [String] = []
     @State var openAddNewCategory = false
     var body: some View {
-        ZStack {
-            Color.blue
-                .opacity(0.1)
-                .ignoresSafeArea()
-            List {
-                if (typeIndex == 0) {
-                    ForEach(0..<tempIncomeArray.count, id:\.self) { category in
-                        HStack {
-                            Text(tempIncomeArray[category])
-                            Spacer()
-                            if (category == self.categoryIndex) {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.blue)
-                                    .font(Font.system(size: 16, weight: .semibold))
-                            }
-                        }.onTapGesture {
-                            self.categoryIndex = category
-                            updateCategory()
-                            dismiss()
+        List {
+            if (typeIndex == 0) {
+                ForEach(tempIncomeArray, id:\.self) { category in
+                    HStack {
+                        Text(category)
+                        Spacer()
+                        if (category == self.category) {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.blue)
+                                .font(Font.system(size: 16, weight: .semibold))
                         }
-                    }.onDelete(perform: removeRows)
-                        .onMove(perform: onMove)
-                } else {
-                    ForEach(0..<tempExpenseArray.count, id:\.self) { category in
-                        HStack {
-                            Text(tempExpenseArray[category])
-                            Spacer()
-                            if (category == self.categoryIndex) {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.blue)
-                                    .font(Font.system(size: 16, weight: .semibold))
-                            }
-                        }.onTapGesture {
-                            self.categoryIndex = category
-                            updateCategory()
-                            dismiss()
-                        }
-                    }.onDelete(perform: removeRows)
-                        .onMove(perform: onMove)
-                    
-                }
-            }
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
+                    }.onTapGesture {
+                        self.category = category
                         updateCategory()
                         dismiss()
-                    }) {
-                        HStack (spacing: 5){
-                            Image(systemName: "chevron.left")
-                                .font(Font.system(.body).bold())
-                            Text("Back")
+                    }
+                    .deleteDisabled(tempIncomeArray.count == 1)
+                }.onDelete(perform: removeRows)
+                    .onMove(perform: onMove)
+            } else {
+                ForEach(tempExpenseArray, id:\.self) { category in
+                    HStack {
+                        Text(category)
+                        Spacer()
+                        if (category == self.category) {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.blue)
+                                .font(Font.system(size: 16, weight: .semibold))
                         }
-                    }.disabled(tempIncomeArray.count == 0 || tempExpenseArray.count == 0)
-                }
+                    }.onTapGesture {
+                        self.category = category
+                        updateCategory()
+                        dismiss()
+                    }
+                    .deleteDisabled(tempExpenseArray.count == 1)
+                }.onDelete(perform: removeRows)
+                    .onMove(perform: onMove)
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        self.openAddNewCategory.toggle()
-                    }) {
-                        Image(systemName: "plus")
-                    }.disabled(tempExpenseArray.count == 8)
-                        .sheet(isPresented: $openAddNewCategory, content: {
-                            if (typeIndex == 0) {
-                                AddNewCategory(CategoryArray: $tempIncomeArray)
-                            } else {
-                                AddNewCategory(CategoryArray: $tempExpenseArray)
-                            }
-                        } )
-                }
             }
-            .onAppear(perform: {
-                tempIncomeArray = transactionData.categoryIncomeArray
-                tempExpenseArray = transactionData.categoryExpenseArray
-            })
         }
+        //.navigationBarBackButtonHidden(true)
+        .onDisappear(perform:  {
+            updateCategory()
+        })
+        .toolbar {
+            /*   ToolbarItem(placement: .navigationBarLeading) {
+             Button(action: {
+             updateCategory()
+             dismiss()
+             }) {
+             HStack (spacing: 5){
+             Image(systemName: "chevron.left")
+             Text("Back")
+             }
+             }.disabled(tempIncomeArray.count == 0 || tempExpenseArray.count == 0)
+             }*/
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditButton()
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    self.openAddNewCategory.toggle()
+                }) {
+                    Image(systemName: "plus")
+                }.disabled(tempExpenseArray.count == 8)
+                    .sheet(isPresented: $openAddNewCategory, content: {
+                        if (typeIndex == 0) {
+                            AddNewCategory(CategoryArray: $tempIncomeArray)
+                        } else {
+                            AddNewCategory(CategoryArray: $tempExpenseArray)
+                        }
+                    } )
+            }
+        }
+        .onAppear(perform: {
+            tempIncomeArray = transactionData.categoryIncomeArray
+            tempExpenseArray = transactionData.categoryExpenseArray
+            
+        })
     }
     
     func updateCategory() {
@@ -122,10 +122,10 @@ struct Category: View {
 }
 
 struct Category_Previews: PreviewProvider {
-    @State static var test = 0
+    @State static var test = "Direct Deposit"
     static var previews: some View {
         NavigationView {
-            Category(transactionData: TransactionModel(), typeIndex: 0, categoryIndex: $test)
+            Category(transactionData: TransactionModel(), typeIndex: 0, category: $test)
         }
     }
 }

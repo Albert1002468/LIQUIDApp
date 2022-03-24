@@ -9,27 +9,31 @@ import SwiftUI
 
 struct TransactionRow: View {
     let transaction: filteredTransaction
-
+    
     var body: some View {
         HStack {
-            VStack (alignment: .leading) {
+            VStack(alignment: .leading) {
                 Text(transaction.description)
+                    .foregroundColor(.black)
                     .font(.headline)
                     .lineLimit(1)
                 Text(transaction.category)
+                    .foregroundColor(.black)
                     .font(.footnote)
                     .lineLimit(1)
             }
             Spacer()
-                HStack {
-                    if transaction.type != "Income" {
-                        Text("-")
-                        Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
-                    } else {
-                        Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
-                            .foregroundColor(.green)
-                    }
+            HStack {
+                if transaction.type != "Income" {
+                    Text("-")
+                        .foregroundColor(.black)
+                    Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
+                        .foregroundColor(.black)
+                } else {
+                    Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
+                        .foregroundColor(.green)
                 }
+            }
         }
     }
 }

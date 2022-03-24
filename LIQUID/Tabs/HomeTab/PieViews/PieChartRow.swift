@@ -37,10 +37,10 @@ struct PieChartRow: View {
                         GeometryReader { geometry in
                             ZStack(alignment: .leading) {
                                 Rectangle()
-                                    .foregroundColor(.green)
+                                    .foregroundColor(Color("TiffanyBlue"))
                                     .frame(width: geometry.size.width * percent * 0.01, height: geometry.size.height)
                                 Capsule()
-                                    .stroke(Color.gray, lineWidth: 1)
+                                    .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                             }
                         }
                     )

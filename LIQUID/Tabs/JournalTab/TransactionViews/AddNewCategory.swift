@@ -12,22 +12,21 @@ struct AddNewCategory: View {
     @Environment(\.dismiss) private var dismiss
     @State var newItemName = ""
     var body: some View {
-        NavigationView {
-            Form {
-                TextField("Enter category name", text: $newItemName)
-                Button(action: {
-                    CategoryArray.append(newItemName)
-                    dismiss()
-                }) {
-                  HStack {
+        
+        Form {
+            TextField("Enter category name", text: $newItemName)
+            Button(action: {
+                CategoryArray.append(newItemName)
+                dismiss()
+            }) {
+                HStack {
                     Image(systemName: "plus.circle.fill")
                     Text("Add new category")
-                  }
-                }.disabled(newItemName.isEmpty)
-            }
-            .navigationTitle("Add new Item")
-            .navigationBarTitleDisplayMode(.inline)
+                }
+            }.disabled(newItemName.isEmpty)
         }
+       // .navigationTitle("Add new Item")
+        //.navigationBarTitleDisplayMode(.inline)
     }
 }
 

@@ -10,10 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var transactionData = TransactionModel()
     @State private var selection = 2
+
     var body: some View {
-        ZStack{
-            LinearGradient(gradient: Gradient(colors: [Color("AccentColor"), Color(UIColor.systemBackground)]), startPoint: .bottom, endPoint: .top)
-                .ignoresSafeArea()
             TabView(selection: $selection){
                 JournalTab(transactionData: transactionData)
                     .tabItem {
@@ -31,7 +29,14 @@ struct ContentView: View {
                         Image(systemName: "gearshape.fill")
                     }.tag(3)
             }
-        }
+            .onAppear {
+                let appearance = UITabBarAppearance()
+                appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+                appearance.backgroundColor = UIColor(Color.clear.opacity(0.2))
+                
+                UITabBar.appearance().standardAppearance = appearance
+                UITabBar.appearance().scrollEdgeAppearance = appearance
+            }
     }
 }
 
@@ -41,5 +46,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+.previewInterfaceOrientation(.portrait)
     }
 }

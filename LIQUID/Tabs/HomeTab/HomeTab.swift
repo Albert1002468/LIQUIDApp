@@ -11,18 +11,21 @@ struct HomeTab: View {
     @ObservedObject var transactionData: TransactionModel
     @Environment(\.colorScheme) var colorScheme
     var innerRadiusFraction = 0.6
-    var backgroundColor = Color.blue.opacity(0.1)
     var body: some View {
-        NavigationView {
             GeometryReader { geometry in
+                ZStack {
+                   // Image("Light Rain")
+                   //     .resizable()
+                   //     .ignoresSafeArea()
                 VStack {
+                    Text("LIQUID").font(.largeTitle)
                     HStack {
                         Spacer()
                         ZStack {
                             Circle()
-                                .fill(Color.green)
+                                .fill(Color("TiffanyBlue"))
                                 .frame(width: geometry.size.width * 1.3 * innerRadiusFraction, height: geometry.size.width * 1.3 * innerRadiusFraction)
-                                .shadow(color: transactionData.categoryExpenseValues.reduce(0, +) > transactionData.categoryIncomeValues.reduce(0, +) ? .red : .green, radius: 50)
+                                .shadow(color: transactionData.categoryExpenseValues.reduce(0, +) > transactionData.categoryIncomeValues.reduce(0, +) ? .red : Color("TiffanyBlue"), radius: 50)
                             
                             ForEach(transactionData.slices) { slice in
                                 PieSliceView(pieSlice: slice)
@@ -36,16 +39,16 @@ struct HomeTab: View {
                             
                             
                             Circle()
-                                .fill(self.backgroundColor)
+                                .fill(colorScheme == .light ? Color.white : Color.black)
                                 .frame(width: geometry.size.width * 0.8 * innerRadiusFraction, height: geometry.size.width * 0.8 * innerRadiusFraction)
                             //.shadow(color: .black, radius: 10)
                             
                             VStack {
                                 Text(transactionData.formatCurrency(amount: transactionData.categoryExpenseValues.reduce(0, +)) + " /")
-                                    .font(Font.system(.largeTitle))
+                                    .font(.largeTitle)
                                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                                 Text(transactionData.formatCurrency(amount: transactionData.categoryIncomeValues.reduce(0, +)))
-                                    .font(Font.system(.largeTitle))
+                                    .font(.largeTitle)
                                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                             }
                         }
@@ -63,8 +66,8 @@ struct HomeTab: View {
                     transactionData.updateCategoryValues()
                     transactionData.getSlices()
                 })
-                .background(backgroundColor)
                 .foregroundColor(Color.black)
+            }
             }
             .navigationTitle("LIQUID")
             .toolbar {
@@ -74,7 +77,7 @@ struct HomeTab: View {
                     }
                 }
             }
-        }
+        
         .onAppear(perform: {
             UITableView.appearance().backgroundColor = UIColor.clear
             transactionData.updateCategoryValues()
