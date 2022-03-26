@@ -15,30 +15,34 @@ struct JournalTab: View {
     
     var body: some View {
         NavigationView {
-            List (transactionData.filteredSections) { section in
-                Section(header: Text(transactionData.formatDate(date: section.date, type: ""))) {
-                    ForEach(section.transactionsOfMonth) { transaction in
-                        NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: Double(transaction.amount) ?? 0.0, type: transaction.type, date: transaction.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, typeIndex: findTransactionType(type: transaction.type), category: transaction.category)
-                        ) {
-                            TransactionRow(transaction: transaction)
-                        }
-                        //  .listRowInsets(.init(top: 5, leading: 25, bottom: 5, trailing: 0))
-                        // .padding(.horizontal, 40)
-                        
-                        //.listRowSeparator(.hidden)
+            ZStack {
+                Image("Light Rain")
+                    .resizable()
+                   // .blur(radius: 10)
+                    //.aspectRatio(contentMode: .fill)
+                    .edgesIgnoringSafeArea(.all)
+                   // .scaledToFill()
+                
+                List (transactionData.filteredSections) { section in
+                    Section(header: Text(transactionData.formatDate(date: section.date))
+                                .font(.body)
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color.black)
+                                .textCase(nil)) {
+                        ForEach(section.transactionsOfMonth) { transaction in
+                            NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: String(Int((Double(transaction.amount) ?? 0.0)*100)), type: transaction.type, date: section.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, typeIndex: findTransactionType(type: transaction.type), category: transaction.category)
+                            ) {
+                                TransactionRow(transaction: transaction)
+                            }
+                            //  .listRowInsets(.init(top: 5, leading: 25, bottom: 5, trailing: 0))
+                            // .padding(.horizontal, 40)
+                            
+                        }.listRowBackground(Color.white.opacity(0.8))
                     }
-                    .listRowBackground(Color.white.opacity(0.9))
                 }
             }
-            .background (
-            Image("Light Rain")
-                .resizable()
-                .ignoresSafeArea())
             .navigationTitle("All Transactions")
             .searchable(text: $searchText)
-            .onChange(of: searchText) { searchText in
-                transactionData.filterSections(searchText: searchText)
-            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -50,6 +54,10 @@ struct JournalTab: View {
                     } )
                 }
             }
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationViewStyle(.stack)
+        .onChange(of: searchText) { searchText in
+            transactionData.filterSections(searchText: searchText)
         }
         .onAppear {
             let appearance = UINavigationBarAppearance()
@@ -58,7 +66,7 @@ struct JournalTab: View {
             
             UINavigationBar.appearance().standardAppearance = appearance
             UINavigationBar.appearance().scrollEdgeAppearance = appearance
-
+            
         }
     }
     
@@ -82,7 +90,6 @@ struct JournalTab: View {
         }
         return -1
     }
-    
 }
 
 struct JournalTab_Previews: PreviewProvider {

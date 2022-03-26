@@ -17,86 +17,53 @@ struct Category: View {
     @State var openAddNewCategory = false
     var body: some View {
         List {
-            if (typeIndex == 0) {
-                ForEach(tempIncomeArray, id:\.self) { category in
-                    HStack {
-                        Text(category)
-                        Spacer()
-                        if (category == self.category) {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
-                                .font(Font.system(size: 16, weight: .semibold))
-                        }
-                    }.onTapGesture {
+            ForEach(typeIndex == 0 ? tempIncomeArray : tempExpenseArray, id:\.self) { category in
+                HStack {
+                    Text(category)
+                    //.frame(width: UIScreen.main.bounds.size.width * 0.45, alignment: .leading)
+                    Spacer()
+                    if (category == self.category) {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.blue)
+                            .font(Font.system(size: 16, weight: .semibold))
+                    }
+                }.contentShape(Rectangle())
+                    .onTapGesture {
                         self.category = category
                         updateCategory()
                         dismiss()
                     }
-                    .deleteDisabled(tempIncomeArray.count == 1)
-                }.onDelete(perform: removeRows)
-                    .onMove(perform: onMove)
-            } else {
-                ForEach(tempExpenseArray, id:\.self) { category in
-                    HStack {
-                        Text(category)
-                        Spacer()
-                        if (category == self.category) {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
-                                .font(Font.system(size: 16, weight: .semibold))
-                        }
-                    }.onTapGesture {
-                        self.category = category
-                        updateCategory()
-                        dismiss()
-                    }
-                    .deleteDisabled(tempExpenseArray.count == 1)
-                }.onDelete(perform: removeRows)
-                    .onMove(perform: onMove)
+                    .deleteDisabled((typeIndex == 0 && tempIncomeArray.count == 1) || (typeIndex == 1 && tempExpenseArray.count == 1))
+            }.onDelete(perform: removeRows)
+                .onMove(perform: onMove)
+                .listRowBackground(Color.white.opacity(0.9))
+        }.addNewCategory(CategoryArray: typeIndex == 0 ? $tempIncomeArray : $tempExpenseArray, isShowing: $openAddNewCategory)
+        .background ( Image("Light Rain")
+                        .resizable()
+                       // .blur(radius: 10)
+                       //.aspectRatio(contentMode: .fill)
+                        .edgesIgnoringSafeArea(.all))
+            .onDisappear(perform:  {
+                updateCategory()
+            }).toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditButton()
+                }
                 
-            }
-        }
-        //.navigationBarBackButtonHidden(true)
-        .onDisappear(perform:  {
-            updateCategory()
-        })
-        .toolbar {
-            /*   ToolbarItem(placement: .navigationBarLeading) {
-             Button(action: {
-             updateCategory()
-             dismiss()
-             }) {
-             HStack (spacing: 5){
-             Image(systemName: "chevron.left")
-             Text("Back")
-             }
-             }.disabled(tempIncomeArray.count == 0 || tempExpenseArray.count == 0)
-             }*/
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                EditButton()
-            }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    self.openAddNewCategory.toggle()
-                }) {
-                    Image(systemName: "plus")
-                }.disabled(tempExpenseArray.count == 8)
-                    .sheet(isPresented: $openAddNewCategory, content: {
-                        if (typeIndex == 0) {
-                            AddNewCategory(CategoryArray: $tempIncomeArray)
-                        } else {
-                            AddNewCategory(CategoryArray: $tempExpenseArray)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    
+                    Button(action: {
+                        withAnimation(.easeOut){
+                            self.openAddNewCategory.toggle()
                         }
-                    } )
-            }
-        }
-        .onAppear(perform: {
-            tempIncomeArray = transactionData.categoryIncomeArray
-            tempExpenseArray = transactionData.categoryExpenseArray
-            
-        })
+                    }) {
+                        Image(systemName: "plus")
+                    }.disabled(typeIndex == 1 && tempExpenseArray.count == 8)
+                }
+            }.onAppear(perform: {
+                tempIncomeArray = transactionData.categoryIncomeArray
+                tempExpenseArray = transactionData.categoryExpenseArray
+            })
     }
     
     func updateCategory() {

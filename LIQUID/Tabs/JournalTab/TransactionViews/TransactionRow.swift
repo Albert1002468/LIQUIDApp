@@ -14,11 +14,9 @@ struct TransactionRow: View {
         HStack {
             VStack(alignment: .leading) {
                 Text(transaction.description)
-                    .foregroundColor(.black)
                     .font(.headline)
                     .lineLimit(1)
                 Text(transaction.category)
-                    .foregroundColor(.black)
                     .font(.footnote)
                     .lineLimit(1)
             }
@@ -26,11 +24,9 @@ struct TransactionRow: View {
             HStack {
                 if transaction.type != "Income" {
                     Text("-")
-                        .foregroundColor(.black)
-                    Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
-                        .foregroundColor(.black)
+                    Text(transaction.formatCurrency(amount: (Double(transaction.amount) ?? 0.0)))
                 } else {
-                    Text(transaction.formatCurrency(amount: Double(transaction.amount) ?? 0.0))
+                    Text(transaction.formatCurrency(amount: (Double(transaction.amount) ?? 0.0)))
                         .foregroundColor(.green)
                 }
             }

@@ -7,32 +7,75 @@
 
 import SwiftUI
 
-struct AddNewCategory: View {
+struct AddNewCategory<Presenting>: View where Presenting: View {
     @Binding var CategoryArray: [String]
-    @Environment(\.dismiss) private var dismiss
+    @Binding var isShowing: Bool
     @State var newItemName = ""
+    let presenting: Presenting
+    
     var body: some View {
-        
-        Form {
-            TextField("Enter category name", text: $newItemName)
-            Button(action: {
-                CategoryArray.append(newItemName)
-                dismiss()
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Add new category")
-                }
-            }.disabled(newItemName.isEmpty)
+        GeometryReader { (geometry: GeometryProxy) in
+            ZStack {
+                self.presenting
+                    .disabled(isShowing)
+                VStack (spacing: 0){
+                    Text("Add Category")
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
+                        .padding(.top)
+                    
+                    TextField("Enter category name", text: $newItemName)
+                        .padding()
+                    
+                    Divider()
+                    
+                    HStack (spacing: 0) {
+                        Button(action: {
+                            withAnimation (.easeIn) {
+                                CategoryArray.append(newItemName)
+                                self.isShowing.toggle()
+                                newItemName = ""
+                        }
+                        }) {
+                            Text("Add").fixedSize()
+                        }.disabled(newItemName.isEmpty)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                        
+                        Divider()
+                        
+                        Button(action: {
+                            withAnimation (.easeIn) {
+                                self.isShowing.toggle()
+                            }
+                        }) {
+                            Text("Dismiss").fixedSize()
+                        }.padding()
+                            .frame(maxWidth: .infinity)
+                    }.fixedSize(horizontal: false, vertical: true)
+                }.background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .frame(width: geometry.size.width * 0.8)
+                    .opacity(self.isShowing ? 1 : 0)
+            }
         }
-       // .navigationTitle("Add new Item")
-        //.navigationBarTitleDisplayMode(.inline)
     }
 }
 
-struct AddNewCategory_Previews: PreviewProvider {
-    @State static var testingString = ["Direct Deposit", "Check"]
-    static var previews: some View {
-        AddNewCategory(CategoryArray: $testingString)
+extension View {
+    func addNewCategory(CategoryArray: Binding<[String]>, isShowing: Binding<Bool>) -> some View {
+        AddNewCategory(CategoryArray: CategoryArray, isShowing: isShowing, presenting: self)
     }
 }
+/*
+struct AddNewCategory_Previews: PreviewProvider {
+    @State static var test = "Direct Deposit"
+    
+    
+    static var previews: some View {
+        NavigationView {
+        Category(transactionData: TransactionModel(), typeIndex: 0, category: $test)
+        }
+    }
+}
+*/

@@ -26,7 +26,7 @@ struct Transaction: Identifiable, Codable {
 struct filteredTransaction: Identifiable, Codable {
     var id: String
     var type: String
-    var date: Date
+    var date: String
     var description: String
     var category: String
     var notes: String
@@ -48,5 +48,5 @@ struct filteredTransaction: Identifiable, Codable {
 
 #if DEBUG
 let testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400)
-let testFilteredTransaction = filteredTransaction(id: "0", type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: "400")
+let testFilteredTransaction = filteredTransaction(id: "0", type: "Income", date: "March 7, 2001", description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: "400")
 #endif

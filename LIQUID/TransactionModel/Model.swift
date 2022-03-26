@@ -21,8 +21,8 @@ class TransactionModel: ObservableObject {
     }
     @Published var categoryIncomeArray = [String] () {
         didSet {
-            if let encoded = try? JSONEncoder().encode(categoryExpenseArray) {
-                UserDefaults.standard.set(encoded, forKey: "categoryExpenseArray")
+            if let encoded = try? JSONEncoder().encode(categoryIncomeArray) {
+                UserDefaults.standard.set(encoded, forKey: "categoryIncomeArray")
             }
         }
     }
@@ -71,11 +71,18 @@ class TransactionModel: ObservableObject {
     func filterTransactions(section: Int, searchText: String) -> [filteredTransaction]{
         var transactionsWithStringID = [filteredTransaction]()
         for transaction in  0..<sections[section].transactionsOfMonth.count {
-            transactionsWithStringID.append(filteredTransaction(id: sections[section].transactionsOfMonth[transaction].id.uuidString, type: sections[section].transactionsOfMonth[transaction].type, date: sections[section].transactionsOfMonth[transaction].date, description: sections[section].transactionsOfMonth[transaction].description, category: sections[section].transactionsOfMonth[transaction].category, notes: sections[section].transactionsOfMonth[transaction].notes, amount: String(format: "%.2f", sections[section].transactionsOfMonth[transaction].amount)))
+            transactionsWithStringID.append(filteredTransaction(
+                id: sections[section].transactionsOfMonth[transaction].id.uuidString,
+                type: sections[section].transactionsOfMonth[transaction].type,
+                date: formatDate(date: sections[section].transactionsOfMonth[transaction].date),
+                description: sections[section].transactionsOfMonth[transaction].description,
+                category: sections[section].transactionsOfMonth[transaction].category,
+                notes: sections[section].transactionsOfMonth[transaction].notes,
+                amount: String(format: "%.2f", sections[section].transactionsOfMonth[transaction].amount)))
         }
         if !searchText.isEmpty {
             let filteredTransaction = transactionsWithStringID.filter {
-                $0.description.localizedCaseInsensitiveContains(searchText)||$0.notes.localizedCaseInsensitiveContains(searchText)||$0.category.localizedCaseInsensitiveContains(searchText)||$0.amount.localizedCaseInsensitiveContains(searchText)||$0.type.localizedCaseInsensitiveContains(searchText)
+                $0.description.localizedCaseInsensitiveContains(searchText)||$0.notes.localizedCaseInsensitiveContains(searchText)||$0.category.localizedCaseInsensitiveContains(searchText)||$0.amount.localizedCaseInsensitiveContains(searchText)||$0.type.localizedCaseInsensitiveContains(searchText)||$0.date.localizedCaseInsensitiveContains(searchText)
             }
             return filteredTransaction
         }
@@ -98,13 +105,13 @@ class TransactionModel: ObservableObject {
             $0.date > $1.date
         }
         sections = sortedSections
-        var sortedTransaction: [Transaction]
-        for section in 0..<sections.count {
-            sortedTransaction = sections[section].transactionsOfMonth.sorted {
-                $0.date > $1.date
-            }
-            sections[section].transactionsOfMonth = sortedTransaction
-        }
+      //  var sortedTransaction: [Transaction]
+       // for section in 0..<sections.count {
+       //     sortedTransaction = sections[section].transactionsOfMonth.sorted {
+       //         $0.date > $1.date
+       //     }
+       //     sections[section].transactionsOfMonth = sortedTransaction
+       // }
     }
     
     func updateCategoryValues() {
@@ -205,7 +212,19 @@ class TransactionModel: ObservableObject {
         }
     }
     
-    func formatDate(date: Date, type: String) -> String {
+    func removeDuplicateDescriptions() -> [String] {
+        var buffer: [String] = []
+        for section in sections {
+            for transaction in section.transactionsOfMonth {
+                if !buffer.contains(transaction.description) {
+                    buffer.append(transaction.description)
+                }
+            }
+        }
+        return buffer
+    }
+    
+    func formatDate(date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.setLocalizedDateFormatFromTemplate("MMMM dd, yyyy")
         return dateFormatter.string(from: date)

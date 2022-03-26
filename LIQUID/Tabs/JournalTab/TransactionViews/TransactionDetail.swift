@@ -12,7 +12,7 @@ struct TransactionDetail: View {
     @ObservedObject var transactionData: TransactionModel
     @Environment(\.dismiss) private var dismiss
     @State var paymentTypeArray = ["Income", "Expense"]
-    @State var amount: Double
+    @State var amount: String
     @State var type: String
     @State var date: Date
     @State var cat: String
@@ -28,84 +28,127 @@ struct TransactionDetail: View {
         
         return formatter
     }()
+    @State var isShowingDeleteConfirmation = false
+    @State var hasOptions = false
+    @State var descriptions: [String] = []
     var body: some View {
-        Form {
-            if (typeIndex == 0) {
-                TextField("Enter amount", value: $amount, formatter: formatter)
-                    .keyboardType(.decimalPad)
-                    .font(.title)
+        ZStack {
+            Image("Light Rain")
+                .resizable()
+            // .blur(radius: 10)
+            //.aspectRatio(contentMode: .fill)
+                .edgesIgnoringSafeArea(.all)
+            VStack {
+                Spacer()
+                Text(transactionData.formatCurrency(amount: (Double(amount) ?? 0.0)/100))
+                    .font(.largeTitle)
+                    .fontWeight(.light)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(.green)
-            } else {
-                TextField("Enter amount", value: $amount, formatter: formatter)
-                    .keyboardType(.decimalPad)
-                    .font(.title)
-                    .multilineTextAlignment(.center)
-            }
-            
-            Section {
-                Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
-                    ForEach(0..<paymentTypeArray.count) {
-                        Text(paymentTypeArray[$0])
-                    }
-                }.onChange(of: typeIndex) { _ in
-                    if typeIndex == 0 {
-                        category = transactionData.categoryIncomeArray[0]
-                    } else {
-                        category = transactionData.categoryExpenseArray[0]
-                    }
-                }
-            }
-            
-            Section {
-                Text("Description")
-                TextField("Enter Description", text: $desc)
-            }
-            
-            Section {
-                DatePicker("Date", selection: $date, displayedComponents: .date)
-            }
-            
-            Section {
-                NavigationLink(destination: Category(transactionData: transactionData, typeIndex: typeIndex, category: $category)) {
-                    if (typeIndex == 0) {
-                        HStack {
-                            Text("Select Income Category")
-                            Spacer()
-                            if (transactionData.categoryIncomeArray.contains(category)) {
-                                Text(category)
-                                    .foregroundColor(.gray)
-                            } else {
-                                Text(transactionData.categoryIncomeArray[0])
+                    .foregroundColor(typeIndex == 0 ? .green: .black)
+                    .frame(width: UIScreen.main.bounds.size.width * 0.90, height: UIScreen.main.bounds.size.height * 0.07)
+                    .background(Color.white.opacity(0.9))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                KeyPad(string: $amount)
+                    .frame(width: UIScreen.main.bounds.size.width * 0.85, height: UIScreen.main.bounds.size.height * 0.3)
+                    .padding()
+                HStack {
+                    if !hasOptions {
+                        List {
+                            Section {
+                                Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
+                                    ForEach(0..<paymentTypeArray.count) {
+                                        Text(paymentTypeArray[$0])
+                                    }
+                                }.pickerStyle(.segmented)
+                                
+                                HStack {
+                                    Text("Description")
+                                    TextField("Enter Description", text: $desc)
+                                    Button(action: {
+                                        withAnimation(){
+                                            self.hasOptions.toggle()
+                                        }
+                                    }) {
+                                        Image(systemName: "magnifyingglass")
+                                    }
+                                }
+                                
+                                
+                                DatePicker("Date", selection: $date, displayedComponents: .date)
+                                
+                                NavigationLink(destination: Category(transactionData: transactionData, typeIndex: typeIndex, category: $category)) {
+                                    HStack {
+                                        Text(typeIndex == 0 ? "Select Income Category" : "Select Expense Category")
+                                        Spacer()
+                                        if (typeIndex == 0 ? transactionData.categoryIncomeArray.contains(category) : transactionData.categoryExpenseArray.contains(category)) {
+                                            Text(category)
+                                                .foregroundColor(.gray)
+                                        } else {
+                                            Text(typeIndex == 0 ? transactionData.categoryIncomeArray[0] : transactionData.categoryExpenseArray[0])
+                                        }
+                                    }
+                                    
+                                }
+                                HStack {
+                                    Text("Notes")
+                                    TextField("Enter Note", text: $note)
+                                }
                             }
-                        }
-                    } else {
-                        HStack {
-                            Text("Select Expense Category")
-                            Spacer()
-                            if (transactionData.categoryExpenseArray.contains(category)) {
-                                Text(category)
-                                    .foregroundColor(.gray)
-                            } else {
-                                Text(transactionData.categoryExpenseArray[0])
-                            }
-                        }
+                            
+                            Section {
+                                HStack {
+                                    Spacer()
+                                    Button("Permanently Delete") {
+                                        isShowingDeleteConfirmation = true
+                                    }.foregroundColor(.white)
+                                        .confirmationDialog("Are You Sure?", isPresented: $isShowingDeleteConfirmation, titleVisibility: .visible) {
+                                            Button("Delete", role: .destructive) {
+                                                deleteTransaction()
+                                                transactionData.filterSections(searchText: searchText)
+                                                dismiss()
+                                            }
+                                        }
+                                    Spacer()
+                                }.padding()
+                            }.listRowBackground(Color.red.opacity(0.9))
+                        }.transition(.move(edge: .bottom))
                     }
-                }
+                    if hasOptions {
+                        List {
+                            HStack {
+                                TextField("Enter Description", text: $desc)
+                                Button(action: {
+                                    withAnimation(){
+                                        self.hasOptions.toggle()
+                                    }
+                                }) {
+                                    HStack {
+                                        Image(systemName:"chevron.left")
+                                        Text("Back")
+                                        
+                                    }
+                                }
+                            }
+                        
+                                ForEach(descriptions.filter {
+                                    desc.isEmpty ? true : $0.localizedCaseInsensitiveContains(desc)
+                                }, id: \.self) { description in
+                                    Text(description)
+                                        .onTapGesture {
+                                            withAnimation(){
+                                                desc = description
+                                                self.hasOptions = false
+                                            }
+                                        }
+                                }
+                        }.onAppear(perform: {
+                            descriptions = transactionData.removeDuplicateDescriptions()
+                        })
+                        .transition(.move(edge: .bottom))
+                    }
+                }.background(Color("DarkWater").opacity(0.5))
             }
-            
-            Section {
-                Text("Notes")
-                TextField("Enter Note", text: $note)
-            }
-            
-            Button("Permanently Delete") {
-                deleteTransaction()
-                transactionData.filterSections(searchText: searchText)
-                dismiss()
-            }
-            
-
         }
         .navigationTitle("Transaction Details")
         .navigationBarTitleDisplayMode(.inline)
@@ -118,8 +161,6 @@ struct TransactionDetail: View {
                     dismiss()
                 }) {
                     HStack (spacing: 5){
-                       // Image(systemName: "chevron.left")
-                        //    .font(Font.system(.body).bold())
                         Text("Save")
                     }
                 }.disabled(desc.isEmpty)
@@ -127,6 +168,7 @@ struct TransactionDetail: View {
         }
         
     }
+    
     func UpdateTransaction() {
         
         var index = 0
@@ -147,7 +189,7 @@ struct TransactionDetail: View {
                 cat = transactionData.categoryExpenseArray[0]
             }
         }
-        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: amount)
+        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100)
         if transaction.formatDate(date: date) != transaction.formatDate(date: transaction.date) {
             for arrayDate in transactionData.sections
             {
@@ -201,6 +243,6 @@ struct TransactionDetail: View {
 struct TransactionDetail_Previews: PreviewProvider {
     @State static var testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400)
     static var previews: some View {
-        TransactionDetail(transaction: testTransaction, transactionData: TransactionModel(), amount: testTransaction.amount, type: testTransaction.type, date: testTransaction.date, cat: testTransaction.category, note: testTransaction.notes, desc: testTransaction.description, searchText: "", typeIndex: 0, category: "Direct Deposit")
+        TransactionDetail(transaction: testTransaction, transactionData: TransactionModel(), amount: "400", type: testTransaction.type, date: testTransaction.date, cat: testTransaction.category, note: testTransaction.notes, desc: testTransaction.description, searchText: "", typeIndex: 0, category: "Direct Deposit")
     }
 }

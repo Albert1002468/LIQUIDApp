@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D523BA2127EC1372009DD95D /* KeyPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = D523BA2027EC1372009DD95D /* KeyPad.swift */; };
 		D59EDF6A27D6AB7700F6C937 /* LIQUIDApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF6927D6AB7700F6C937 /* LIQUIDApp.swift */; };
 		D59EDF6C27D6AB7700F6C937 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF6B27D6AB7700F6C937 /* ContentView.swift */; };
 		D59EDF6E27D6AB7800F6C937 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D59EDF6D27D6AB7800F6C937 /* Assets.xcassets */; };
@@ -28,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D523BA2027EC1372009DD95D /* KeyPad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPad.swift; sourceTree = "<group>"; };
 		D54FFA8427DE63800079E657 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D59EDF6627D6AB7700F6C937 /* LIQUID.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LIQUID.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D59EDF6927D6AB7700F6C937 /* LIQUIDApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LIQUIDApp.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				D59EDF8727D6B41000F6C937 /* TransactionDetail.swift */,
 				D5DD122927DC5B0400E1FF08 /* Category.swift */,
 				D5DD122B27DC7B9500E1FF08 /* AddNewCategory.swift */,
+				D523BA2027EC1372009DD95D /* KeyPad.swift */,
 			);
 			path = TransactionViews;
 			sourceTree = "<group>";
@@ -255,6 +258,7 @@
 				D5DD122A27DC5B0400E1FF08 /* Category.swift in Sources */,
 				D59EDF6C27D6AB7700F6C937 /* ContentView.swift in Sources */,
 				D59EDF6A27D6AB7700F6C937 /* LIQUIDApp.swift in Sources */,
+				D523BA2127EC1372009DD95D /* KeyPad.swift in Sources */,
 				D59EDF8627D6B3EB00F6C937 /* TransactionRow.swift in Sources */,
 				D59EDF8B27D6B6A300F6C937 /* JournalTab.swift in Sources */,
 				D59EDF8D27D6B6CC00F6C937 /* HomeTab.swift in Sources */,
@@ -401,6 +405,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -433,6 +438,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
