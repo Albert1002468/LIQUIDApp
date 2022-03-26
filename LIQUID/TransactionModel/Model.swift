@@ -74,15 +74,15 @@ class TransactionModel: ObservableObject {
             transactionsWithStringID.append(filteredTransaction(
                 id: sections[section].transactionsOfMonth[transaction].id.uuidString,
                 type: sections[section].transactionsOfMonth[transaction].type,
-                date: formatDate(date: sections[section].transactionsOfMonth[transaction].date),
+                date: sections[section].transactionsOfMonth[transaction].date,
                 description: sections[section].transactionsOfMonth[transaction].description,
                 category: sections[section].transactionsOfMonth[transaction].category,
                 notes: sections[section].transactionsOfMonth[transaction].notes,
-                amount: String(format: "%.2f", sections[section].transactionsOfMonth[transaction].amount)))
+                amount: sections[section].transactionsOfMonth[transaction].amount))
         }
         if !searchText.isEmpty {
             let filteredTransaction = transactionsWithStringID.filter {
-                $0.description.localizedCaseInsensitiveContains(searchText)||$0.notes.localizedCaseInsensitiveContains(searchText)||$0.category.localizedCaseInsensitiveContains(searchText)||$0.amount.localizedCaseInsensitiveContains(searchText)||$0.type.localizedCaseInsensitiveContains(searchText)||$0.date.localizedCaseInsensitiveContains(searchText)
+                $0.description.localizedCaseInsensitiveContains(searchText)||$0.notes.localizedCaseInsensitiveContains(searchText)||$0.category.localizedCaseInsensitiveContains(searchText)||formatCurrency(amount: $0.amount).localizedCaseInsensitiveContains(searchText)||$0.type.localizedCaseInsensitiveContains(searchText)||formatDate(date: $0.date).localizedCaseInsensitiveContains(searchText)||formatDateByMonthYear(date: $0.date).localizedCaseInsensitiveContains(searchText)
             }
             return filteredTransaction
         }
@@ -230,10 +230,18 @@ class TransactionModel: ObservableObject {
         return dateFormatter.string(from: date)
     }
     
+    func formatDateByMonthYear(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.setLocalizedDateFormatFromTemplate("MMMM yyyy")
+        return dateFormatter.string(from: date)
+    }
+    
     func formatCurrency(amount: Double) -> String {
         let formatter = NumberFormatter()
         formatter.locale = Locale.current
         formatter.numberStyle = .currency
         return formatter.string(from: amount as NSNumber)!
     }
+    
+    
 }

@@ -4,7 +4,6 @@
 //
 //  Created by Alberto Dominguez Fernandez on 3/7/22.
 //
-
 import SwiftUI
 
 struct AddTransaction: View {
@@ -28,6 +27,7 @@ struct AddTransaction: View {
     @State var category = ""
     @State var hasOptions = false
     @State var descriptions: [String] = []
+    @State var tempDesc = ""
     var body: some View {
         NavigationView {
             ZStack {
@@ -50,7 +50,8 @@ struct AddTransaction: View {
                     KeyPad(string: $amount)
                         .frame(width: UIScreen.main.bounds.size.width * 0.9, height: UIScreen.main.bounds.size.height * 0.3)
                         .padding()
-                    HStack {
+                    ZStack {
+                        Color("DarkWater").opacity(0.6)
                         if !hasOptions {
                             List {
                                 Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
@@ -62,6 +63,8 @@ struct AddTransaction: View {
                                 HStack {
                                     Text("Description")
                                     TextField("Enter Description", text: $desc)
+                                        .keyboardType(.alphabet)
+                                        .disableAutocorrection(true)
                                     Button(action: {
                                         withAnimation(){
                                             self.hasOptions.toggle()
@@ -90,14 +93,18 @@ struct AddTransaction: View {
                                 HStack {
                                     Text("Notes")
                                     TextField("Enter Note", text: $note)
+                                        .keyboardType(.alphabet)
+                                        .disableAutocorrection(true)
                                 }
                                 
-                            }.transition(.move(edge: .bottom))
+                            }.transition(.move(edge: .leading))
                         }
                         if hasOptions {
                             List {
                                 HStack {
-                                    TextField("Enter Description", text: $desc)
+                                    TextField("Enter Description", text: $tempDesc)
+                                        .keyboardType(.alphabet)
+                                        .disableAutocorrection(true)
                                     Button(action: {
                                         withAnimation(){
                                             self.hasOptions.toggle()
@@ -112,9 +119,12 @@ struct AddTransaction: View {
                                 }
                                 
                                 ForEach(descriptions.filter {
-                                    desc.isEmpty ? true : $0.localizedCaseInsensitiveContains(desc)
+                                    tempDesc.isEmpty ? true : $0.localizedCaseInsensitiveContains(tempDesc)
                                 }, id: \.self) { description in
+                                    HStack {
                                     Text(description)
+                                        Spacer()
+                                    }.contentShape(Rectangle())
                                         .onTapGesture {
                                             withAnimation(){
                                                 desc = description
@@ -123,13 +133,13 @@ struct AddTransaction: View {
                                         }
                                 }
                             }.onAppear(perform: {
+                                tempDesc = ""
                                 descriptions = transactionData.removeDuplicateDescriptions()
                             })
-                            .transition(.move(edge: .bottom))
+                            .transition(.move(edge: .trailing))
                         }
-                    }.background(Color("DarkWater").opacity(0.5))
-                    
-                }//.frame(width: UIScreen.main.bounds.size.width * 0.90)
+                    }
+                }
             }
             .navigationTitle("Add Transaction")
             .navigationBarTitleDisplayMode(.inline)

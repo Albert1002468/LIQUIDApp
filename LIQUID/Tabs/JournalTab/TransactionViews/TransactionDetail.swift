@@ -31,6 +31,7 @@ struct TransactionDetail: View {
     @State var isShowingDeleteConfirmation = false
     @State var hasOptions = false
     @State var descriptions: [String] = []
+    @State var tempDesc = ""
     var body: some View {
         ZStack {
             Image("Light Rain")
@@ -38,6 +39,7 @@ struct TransactionDetail: View {
             // .blur(radius: 10)
             //.aspectRatio(contentMode: .fill)
                 .edgesIgnoringSafeArea(.all)
+            
             VStack {
                 Spacer()
                 Text(transactionData.formatCurrency(amount: (Double(amount) ?? 0.0)/100))
@@ -52,7 +54,9 @@ struct TransactionDetail: View {
                 KeyPad(string: $amount)
                     .frame(width: UIScreen.main.bounds.size.width * 0.85, height: UIScreen.main.bounds.size.height * 0.3)
                     .padding()
-                HStack {
+                
+                ZStack {
+                    Color("DarkWater").opacity(0.6)
                     if !hasOptions {
                         List {
                             Section {
@@ -61,10 +65,12 @@ struct TransactionDetail: View {
                                         Text(paymentTypeArray[$0])
                                     }
                                 }.pickerStyle(.segmented)
-                                
+                                                                
                                 HStack {
                                     Text("Description")
                                     TextField("Enter Description", text: $desc)
+                                        .keyboardType(.alphabet)
+                                        .disableAutocorrection(true)
                                     Button(action: {
                                         withAnimation(){
                                             self.hasOptions.toggle()
@@ -73,51 +79,54 @@ struct TransactionDetail: View {
                                         Image(systemName: "magnifyingglass")
                                     }
                                 }
-                                
-                                
+                                                                
                                 DatePicker("Date", selection: $date, displayedComponents: .date)
-                                
+                                                                
                                 NavigationLink(destination: Category(transactionData: transactionData, typeIndex: typeIndex, category: $category)) {
                                     HStack {
-                                        Text(typeIndex == 0 ? "Select Income Category" : "Select Expense Category")
+                                        Text(typeIndex == 0 ? "Select Income Category" : "Select Expense Category").foregroundColor(.black).multilineTextAlignment(.leading)
                                         Spacer()
                                         if (typeIndex == 0 ? transactionData.categoryIncomeArray.contains(category) : transactionData.categoryExpenseArray.contains(category)) {
-                                            Text(category)
-                                                .foregroundColor(.gray)
+                                                Text(category)
+                                            .foregroundColor(.gray)
+                                            
                                         } else {
-                                            Text(typeIndex == 0 ? transactionData.categoryIncomeArray[0] : transactionData.categoryExpenseArray[0])
+                                                Text(typeIndex == 0 ? transactionData.categoryIncomeArray[0] : transactionData.categoryExpenseArray[0])
+                                            
                                         }
                                     }
-                                    
                                 }
+                                                                
                                 HStack {
                                     Text("Notes")
                                     TextField("Enter Note", text: $note)
+                                        .keyboardType(.alphabet)
+                                        .disableAutocorrection(true)
                                 }
                             }
                             
-                            Section {
-                                HStack {
-                                    Spacer()
-                                    Button("Permanently Delete") {
-                                        isShowingDeleteConfirmation = true
-                                    }.foregroundColor(.white)
-                                        .confirmationDialog("Are You Sure?", isPresented: $isShowingDeleteConfirmation, titleVisibility: .visible) {
-                                            Button("Delete", role: .destructive) {
-                                                deleteTransaction()
-                                                transactionData.filterSections(searchText: searchText)
-                                                dismiss()
-                                            }
+                            HStack {
+                                Spacer()
+                                Button("Permanently Delete") {
+                                    isShowingDeleteConfirmation = true
+                                }.foregroundColor(.white)
+                                    .confirmationDialog("Are You Sure?", isPresented: $isShowingDeleteConfirmation, titleVisibility: .visible) {
+                                        Button("Delete", role: .destructive) {
+                                            deleteTransaction()
+                                            transactionData.filterSections(searchText: searchText)
+                                            dismiss()
                                         }
-                                    Spacer()
-                                }.padding()
+                                    }
+                                Spacer()
                             }.listRowBackground(Color.red.opacity(0.9))
-                        }.transition(.move(edge: .bottom))
+                        }.transition(.move(edge: .leading))
                     }
                     if hasOptions {
                         List {
                             HStack {
-                                TextField("Enter Description", text: $desc)
+                                TextField("Enter Description", text: $tempDesc)
+                                    .keyboardType(.alphabet)
+                                    .disableAutocorrection(true)
                                 Button(action: {
                                     withAnimation(){
                                         self.hasOptions.toggle()
@@ -130,25 +139,32 @@ struct TransactionDetail: View {
                                     }
                                 }
                             }
-                        
-                                ForEach(descriptions.filter {
-                                    desc.isEmpty ? true : $0.localizedCaseInsensitiveContains(desc)
-                                }, id: \.self) { description in
-                                    Text(description)
-                                        .onTapGesture {
-                                            withAnimation(){
-                                                desc = description
-                                                self.hasOptions = false
-                                            }
+                            
+                            ForEach(descriptions.filter {
+                                tempDesc.isEmpty ? true : $0.localizedCaseInsensitiveContains(tempDesc)
+                            }, id: \.self) { description in
+                                HStack {
+                                Text(description)
+                                    Spacer()
+                                }.contentShape(Rectangle())
+                                    .onTapGesture {
+                                        withAnimation(){
+                                            desc = description
+                                            self.hasOptions = false
                                         }
-                                }
+                                    }
+                            }
                         }.onAppear(perform: {
+                            tempDesc = ""
                             descriptions = transactionData.removeDuplicateDescriptions()
                         })
-                        .transition(.move(edge: .bottom))
+                        .transition(.move(edge: .trailing))
                     }
-                }.background(Color("DarkWater").opacity(0.5))
+                }
             }
+            
+            
+            
         }
         .navigationTitle("Transaction Details")
         .navigationBarTitleDisplayMode(.inline)
@@ -166,7 +182,9 @@ struct TransactionDetail: View {
                 }.disabled(desc.isEmpty)
             }
         }
-        
+        .onAppear(perform: {
+            descriptions = transactionData.removeDuplicateDescriptions()
+        })
     }
     
     func UpdateTransaction() {

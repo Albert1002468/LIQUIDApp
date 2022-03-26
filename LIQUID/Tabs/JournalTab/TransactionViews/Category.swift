@@ -20,7 +20,6 @@ struct Category: View {
             ForEach(typeIndex == 0 ? tempIncomeArray : tempExpenseArray, id:\.self) { category in
                 HStack {
                     Text(category)
-                    //.frame(width: UIScreen.main.bounds.size.width * 0.45, alignment: .leading)
                     Spacer()
                     if (category == self.category) {
                         Image(systemName: "checkmark")

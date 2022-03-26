@@ -30,7 +30,7 @@ struct JournalTab: View {
                                 .foregroundColor(Color.black)
                                 .textCase(nil)) {
                         ForEach(section.transactionsOfMonth) { transaction in
-                            NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: String(Int((Double(transaction.amount) ?? 0.0)*100)), type: transaction.type, date: section.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, typeIndex: findTransactionType(type: transaction.type), category: transaction.category)
+                            NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: String(Int(transaction.amount*100)), type: transaction.type, date: section.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, typeIndex: findTransactionType(type: transaction.type), category: transaction.category)
                             ) {
                                 TransactionRow(transaction: transaction)
                             }
@@ -43,6 +43,8 @@ struct JournalTab: View {
             }
             .navigationTitle("All Transactions")
             .searchable(text: $searchText)
+            .keyboardType(.alphabet)
+            .disableAutocorrection(true)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
