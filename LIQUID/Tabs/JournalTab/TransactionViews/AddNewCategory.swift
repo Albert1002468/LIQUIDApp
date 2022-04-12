@@ -31,7 +31,7 @@ struct AddNewCategory<Presenting>: View where Presenting: View {
                     
                     HStack (spacing: 0) {
                         Button(action: {
-                            withAnimation (.easeIn) {
+                            withAnimation (.easeInOut(duration: 0.1)) {
                                 CategoryArray.append(newItemName)
                                 self.isShowing.toggle()
                                 newItemName = ""
@@ -45,7 +45,7 @@ struct AddNewCategory<Presenting>: View where Presenting: View {
                         Divider()
                         
                         Button(action: {
-                            withAnimation (.easeIn) {
+                            withAnimation (.easeInOut(duration: 0.1)) {
                                 self.isShowing.toggle()
                             }
                         }) {

@@ -36,8 +36,8 @@ struct Category: View {
             }.onDelete(perform: removeRows)
                 .onMove(perform: onMove)
                 .listRowBackground(Color.white.opacity(0.9))
-        }.addNewCategory(CategoryArray: typeIndex == 0 ? $tempIncomeArray : $tempExpenseArray, isShowing: $openAddNewCategory)
-        .background ( Image("Light Rain")
+        }
+        .background(Image("Black")
                         .resizable()
                        // .blur(radius: 10)
                        //.aspectRatio(contentMode: .fill)
@@ -52,7 +52,7 @@ struct Category: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     
                     Button(action: {
-                        withAnimation(.easeOut){
+                        withAnimation(.easeInOut(duration: 0.1)){
                             self.openAddNewCategory.toggle()
                         }
                     }) {
@@ -63,7 +63,10 @@ struct Category: View {
                 tempIncomeArray = transactionData.categoryIncomeArray
                 tempExpenseArray = transactionData.categoryExpenseArray
             })
+            .disabled(openAddNewCategory ? true : false)
+            .addNewCategory(CategoryArray: typeIndex == 0 ? $tempIncomeArray : $tempExpenseArray, isShowing: $openAddNewCategory)
     }
+
     
     func updateCategory() {
         transactionData.categoryIncomeArray = tempIncomeArray

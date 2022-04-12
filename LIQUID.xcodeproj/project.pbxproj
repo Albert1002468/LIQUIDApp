@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D518A0BE2803870F00859B79 /* SavingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D518A0BD2803870F00859B79 /* SavingsView.swift */; };
+		D518A0C02803918100859B79 /* SavingsTank.swift in Sources */ = {isa = PBXBuildFile; fileRef = D518A0BF2803918100859B79 /* SavingsTank.swift */; };
+		D518A0C22803937300859B79 /* AddSavings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D518A0C12803937300859B79 /* AddSavings.swift */; };
+		D518A0C82803983000859B79 /* Savings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D518A0C72803983000859B79 /* Savings.swift */; };
+		D518A0CA28039C6000859B79 /* SavingsDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = D518A0C928039C6000859B79 /* SavingsDetail.swift */; };
 		D523BA2127EC1372009DD95D /* KeyPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = D523BA2027EC1372009DD95D /* KeyPad.swift */; };
 		D59EDF6A27D6AB7700F6C937 /* LIQUIDApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF6927D6AB7700F6C937 /* LIQUIDApp.swift */; };
 		D59EDF6C27D6AB7700F6C937 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59EDF6B27D6AB7700F6C937 /* ContentView.swift */; };
@@ -26,9 +31,15 @@
 		D5DD122627DBBD9900E1FF08 /* PieSlice.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD122527DBBD9900E1FF08 /* PieSlice.swift */; };
 		D5DD122A27DC5B0400E1FF08 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD122927DC5B0400E1FF08 /* Category.swift */; };
 		D5DD122C27DC7B9500E1FF08 /* AddNewCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD122B27DC7B9500E1FF08 /* AddNewCategory.swift */; };
+		D5EE0E0728028B8A00B83899 /* SortDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EE0E0628028B8A00B83899 /* SortDate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D518A0BD2803870F00859B79 /* SavingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavingsView.swift; sourceTree = "<group>"; };
+		D518A0BF2803918100859B79 /* SavingsTank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavingsTank.swift; sourceTree = "<group>"; };
+		D518A0C12803937300859B79 /* AddSavings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSavings.swift; sourceTree = "<group>"; };
+		D518A0C72803983000859B79 /* Savings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Savings.swift; sourceTree = "<group>"; };
+		D518A0C928039C6000859B79 /* SavingsDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavingsDetail.swift; sourceTree = "<group>"; };
 		D523BA2027EC1372009DD95D /* KeyPad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPad.swift; sourceTree = "<group>"; };
 		D54FFA8427DE63800079E657 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D59EDF6627D6AB7700F6C937 /* LIQUID.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LIQUID.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -50,6 +61,7 @@
 		D5DD122527DBBD9900E1FF08 /* PieSlice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieSlice.swift; sourceTree = "<group>"; };
 		D5DD122927DC5B0400E1FF08 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		D5DD122B27DC7B9500E1FF08 /* AddNewCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewCategory.swift; sourceTree = "<group>"; };
+		D5EE0E0628028B8A00B83899 /* SortDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortDate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +75,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D518A0BC280386FC00859B79 /* SavingsViews */ = {
+			isa = PBXGroup;
+			children = (
+				D518A0BD2803870F00859B79 /* SavingsView.swift */,
+				D518A0C928039C6000859B79 /* SavingsDetail.swift */,
+				D518A0C12803937300859B79 /* AddSavings.swift */,
+				D518A0BF2803918100859B79 /* SavingsTank.swift */,
+			);
+			path = SavingsViews;
+			sourceTree = "<group>";
+		};
 		D59EDF5D27D6AB7700F6C937 = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +130,7 @@
 			children = (
 				D59EDF7827D6ABD800F6C937 /* Transaction.swift */,
 				D59EDF7A27D6ABE700F6C937 /* Day.swift */,
+				D518A0C72803983000859B79 /* Savings.swift */,
 				D5DD122527DBBD9900E1FF08 /* PieSlice.swift */,
 			);
 			path = Objects;
@@ -164,6 +188,8 @@
 			isa = PBXGroup;
 			children = (
 				D59EDF8C27D6B6CC00F6C937 /* HomeTab.swift */,
+				D5EE0E0628028B8A00B83899 /* SortDate.swift */,
+				D518A0BC280386FC00859B79 /* SavingsViews */,
 				D5DD121E27DA704000E1FF08 /* PieViews */,
 			);
 			path = HomeTab;
@@ -256,15 +282,21 @@
 				D59EDF9027D6B6E300F6C937 /* SettingsTab.swift in Sources */,
 				D5DD122427DB08D600E1FF08 /* PieChartRow.swift in Sources */,
 				D5DD122A27DC5B0400E1FF08 /* Category.swift in Sources */,
+				D518A0C22803937300859B79 /* AddSavings.swift in Sources */,
 				D59EDF6C27D6AB7700F6C937 /* ContentView.swift in Sources */,
 				D59EDF6A27D6AB7700F6C937 /* LIQUIDApp.swift in Sources */,
+				D518A0CA28039C6000859B79 /* SavingsDetail.swift in Sources */,
 				D523BA2127EC1372009DD95D /* KeyPad.swift in Sources */,
+				D5EE0E0728028B8A00B83899 /* SortDate.swift in Sources */,
 				D59EDF8627D6B3EB00F6C937 /* TransactionRow.swift in Sources */,
 				D59EDF8B27D6B6A300F6C937 /* JournalTab.swift in Sources */,
 				D59EDF8D27D6B6CC00F6C937 /* HomeTab.swift in Sources */,
 				D5DD122627DBBD9900E1FF08 /* PieSlice.swift in Sources */,
 				D59EDF7B27D6ABE700F6C937 /* Day.swift in Sources */,
+				D518A0C02803918100859B79 /* SavingsTank.swift in Sources */,
+				D518A0C82803983000859B79 /* Savings.swift in Sources */,
 				D59EDF7927D6ABD800F6C937 /* Transaction.swift in Sources */,
+				D518A0BE2803870F00859B79 /* SavingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

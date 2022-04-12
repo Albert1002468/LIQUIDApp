@@ -11,17 +11,14 @@ struct JournalTab: View {
     @ObservedObject var transactionData: TransactionModel
     @State private var openAddTransactions = false
     @State private var searchText = ""
-    @State var paymentTypeArray = ["Income", "Expense"]
+    let paymentTypeArray = ["Income", "Expense"]
     
     var body: some View {
         NavigationView {
             ZStack {
                 Image("Light Rain")
                     .resizable()
-                   // .blur(radius: 10)
-                    //.aspectRatio(contentMode: .fill)
-                    .edgesIgnoringSafeArea(.all)
-                   // .scaledToFill()
+                    .ignoresSafeArea()
                 
                 List (transactionData.filteredSections) { section in
                     Section(header: Text(transactionData.formatDate(date: section.date))
@@ -30,19 +27,21 @@ struct JournalTab: View {
                                 .foregroundColor(Color.black)
                                 .textCase(nil)) {
                         ForEach(section.transactionsOfMonth) { transaction in
-                            NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: String(Int(transaction.amount*100)), type: transaction.type, date: section.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, typeIndex: findTransactionType(type: transaction.type), category: transaction.category)
+                            NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: String(Int(transaction.amount*100)), type: transaction.type, date: section.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, savings: transaction.saving, typeIndex: findTransactionType(type: transaction.type), category: transaction.category)
                             ) {
                                 TransactionRow(transaction: transaction)
                             }
                             //  .listRowInsets(.init(top: 5, leading: 25, bottom: 5, trailing: 0))
                             // .padding(.horizontal, 40)
                             
-                        }.listRowBackground(Color.white.opacity(0.8))
+                        }
+                        .listRowBackground(Color.white.opacity(0.8))
                     }
                 }
             }
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
             .navigationTitle("All Transactions")
-            .searchable(text: $searchText)
+            .navigationBarTitleDisplayMode(.inline)
             .keyboardType(.alphabet)
             .disableAutocorrection(true)
             .toolbar {
@@ -61,15 +60,7 @@ struct JournalTab: View {
         .onChange(of: searchText) { searchText in
             transactionData.filterSections(searchText: searchText)
         }
-        .onAppear {
-            let appearance = UINavigationBarAppearance()
-            appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-            appearance.backgroundColor = UIColor(Color.clear.opacity(0.2))
-            
-            UINavigationBar.appearance().standardAppearance = appearance
-            UINavigationBar.appearance().scrollEdgeAppearance = appearance
-            
-        }
+
     }
     
     func findTransactionType(type: String) -> Int {

@@ -16,13 +16,14 @@ struct AddTransaction: View {
         
         return formatter
     }()
-    @State var paymentTypeArray = ["Income", "Expense"]
+    let paymentTypeArray = ["Income", "Expense"]
     @State var amount = ""
     @State var type = "Income"
     @State var date = Date.now
     @State var cat = ""
     @State var note = ""
     @State var desc = ""
+    @State var savings = 0.0
     @State var typeIndex = 0
     @State var category = ""
     @State var hasOptions = false
@@ -31,11 +32,10 @@ struct AddTransaction: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Image("Light Rain")
+                Image("Black")
                     .resizable()
-                // .blur(radius: 10)
-                //.aspectRatio(contentMode: .fill)
-                    .edgesIgnoringSafeArea(.all)
+                    .ignoresSafeArea()
+                
                 VStack {
                     Spacer()
                     Text(transactionData.formatCurrency(amount: (Double(amount) ?? 0.0)/100))
@@ -51,11 +51,12 @@ struct AddTransaction: View {
                         .frame(width: UIScreen.main.bounds.size.width * 0.9, height: UIScreen.main.bounds.size.height * 0.3)
                         .padding()
                     ZStack {
-                        Color("DarkWater").opacity(0.6)
+                        Color(.gray).opacity(0.6)
+                            .ignoresSafeArea()
                         if !hasOptions {
                             List {
                                 Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
-                                    ForEach(0..<paymentTypeArray.count) {
+                                    ForEach(0..<paymentTypeArray.count, id:\.self) {
                                         Text(paymentTypeArray[$0])
                                     }
                                 }.pickerStyle(.segmented)
@@ -145,24 +146,15 @@ struct AddTransaction: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 Button(action: {
+                    savings = transactionData.allocateSavings(amount: Double(amount) ?? 0.0)
                     AddNewTransaction()
                     transactionData.sortSections()
                     transactionData.filterSections(searchText: "")
                     dismiss()
                 }) {
                     Text("Save")
-                }.disabled(desc.isEmpty)
+                }.disabled(desc.isEmpty || amount.isEmpty)
             }
-            
-        }
-        
-        .onAppear {
-            let appearance = UINavigationBarAppearance()
-            appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-            appearance.backgroundColor = UIColor(.clear)
-            
-            UINavigationBar.appearance().scrollEdgeAppearance = appearance
-            
         }
     }
     
@@ -193,7 +185,7 @@ struct AddTransaction: View {
                 cat = transactionData.categoryExpenseArray[0]
             }
         }
-        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100)
+        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100, saving: savings)
         if found == true {
             transactionData.sections[index].transactionsOfMonth.append(singleTransaction)
         }

@@ -11,7 +11,7 @@ struct TransactionDetail: View {
     @State var transaction: Transaction
     @ObservedObject var transactionData: TransactionModel
     @Environment(\.dismiss) private var dismiss
-    @State var paymentTypeArray = ["Income", "Expense"]
+    let paymentTypeArray = ["Income", "Expense"]
     @State var amount: String
     @State var type: String
     @State var date: Date
@@ -19,26 +19,18 @@ struct TransactionDetail: View {
     @State var note: String
     @State var desc: String
     @State var searchText: String
+    @State var savings: Double
     @State var typeIndex: Int
     @State var category: String
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.maximumFractionDigits = 2
-        
-        return formatter
-    }()
     @State var isShowingDeleteConfirmation = false
     @State var hasOptions = false
     @State var descriptions: [String] = []
     @State var tempDesc = ""
     var body: some View {
         ZStack {
-            Image("Light Rain")
+            Image("Black")
                 .resizable()
-            // .blur(radius: 10)
-            //.aspectRatio(contentMode: .fill)
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea()
             
             VStack {
                 Spacer()
@@ -56,12 +48,13 @@ struct TransactionDetail: View {
                     .padding()
                 
                 ZStack {
-                    Color("DarkWater").opacity(0.6)
+                    Color(.gray).opacity(0.6)
+                        .ignoresSafeArea()
                     if !hasOptions {
                         List {
                             Section {
                                 Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
-                                    ForEach(0..<paymentTypeArray.count) {
+                                    ForEach(0..<paymentTypeArray.count, id:\.self) {
                                         Text(paymentTypeArray[$0])
                                     }
                                 }.pickerStyle(.segmented)
@@ -96,7 +89,7 @@ struct TransactionDetail: View {
                                         }
                                     }
                                 }
-                                                                
+                                Text("Amount Going Towards Savings: \(transactionData.formatCurrency(amount: transaction.saving))")
                                 HStack {
                                     Text("Notes")
                                     TextField("Enter Note", text: $note)
@@ -162,9 +155,6 @@ struct TransactionDetail: View {
                     }
                 }
             }
-            
-            
-            
         }
         .navigationTitle("Transaction Details")
         .navigationBarTitleDisplayMode(.inline)
@@ -179,7 +169,7 @@ struct TransactionDetail: View {
                     HStack (spacing: 5){
                         Text("Save")
                     }
-                }.disabled(desc.isEmpty)
+                }.disabled(desc.isEmpty || amount.isEmpty)
             }
         }
         .onAppear(perform: {
@@ -207,7 +197,7 @@ struct TransactionDetail: View {
                 cat = transactionData.categoryExpenseArray[0]
             }
         }
-        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100)
+        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100, saving: savings)
         if transaction.formatDate(date: date) != transaction.formatDate(date: transaction.date) {
             for arrayDate in transactionData.sections
             {
@@ -259,8 +249,8 @@ struct TransactionDetail: View {
 }
 
 struct TransactionDetail_Previews: PreviewProvider {
-    @State static var testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400)
+    @State static var testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400, saving: 12.3)
     static var previews: some View {
-        TransactionDetail(transaction: testTransaction, transactionData: TransactionModel(), amount: "400", type: testTransaction.type, date: testTransaction.date, cat: testTransaction.category, note: testTransaction.notes, desc: testTransaction.description, searchText: "", typeIndex: 0, category: "Direct Deposit")
+        TransactionDetail(transaction: testTransaction, transactionData: TransactionModel(), amount: "400", type: testTransaction.type, date: testTransaction.date, cat: testTransaction.category, note: testTransaction.notes, desc: testTransaction.description, searchText: "", savings: 2.32, typeIndex: 0, category: "Direct Deposit")
     }
 }

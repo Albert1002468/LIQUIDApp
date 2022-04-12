@@ -7,36 +7,50 @@
 
 import SwiftUI
 
+enum Tabs: String {
+    case journal
+    case home
+    case settings
+}
+
 struct ContentView: View {
     @ObservedObject var transactionData = TransactionModel()
-    @State private var selection = 2
-
+    @State private var selection: Tabs = .home
+    
     var body: some View {
-            TabView(selection: $selection){
-                JournalTab(transactionData: transactionData)
-                    .tabItem {
-                        Text("Journal")
-                        Image(systemName: "book.fill")
-                    }.tag(1)
-                HomeTab(transactionData: transactionData)
-                    .tabItem {
-                        Text("Home")
-                        Image(systemName: "house.fill")
-                    }.tag(2)
-                SettingsTab()
-                    .tabItem {
-                        Text("Settings")
-                        Image(systemName: "gearshape.fill")
-                    }.tag(3)
-            }
-            .onAppear {
-                let appearance = UITabBarAppearance()
-                appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-                appearance.backgroundColor = UIColor(Color.clear.opacity(0.2))
-                
-                UITabBar.appearance().standardAppearance = appearance
-                UITabBar.appearance().scrollEdgeAppearance = appearance
-            }
+        TabView(selection: $selection) {
+            JournalTab(transactionData: transactionData)
+                .tabItem {
+                    Text("Journal")
+                    Image(systemName: "book.fill")
+                }.tag(Tabs.journal)
+            HomeTab(transactionData: transactionData)
+                .tabItem {
+                    Text("Home")
+                    Image(systemName: "house.fill")
+                }.tag(Tabs.home)
+            SettingsTab()
+                .tabItem {
+                    Text("Settings")
+                    Image(systemName: "gearshape.fill")
+                }.tag(Tabs.settings)
+        }
+
+        .onAppear {
+            UITableView.appearance().backgroundColor = UIColor.clear
+
+            let appearance = UINavigationBarAppearance()
+            appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+            appearance.backgroundColor = UIColor(Color.clear.opacity(0.2))
+            UINavigationBar.appearance().standardAppearance = appearance
+            UINavigationBar.appearance().standardAppearance = appearance
+            
+            let tabAppearance = UITabBarAppearance()
+            tabAppearance.backgroundEffect = UIBlurEffect(style: .systemThickMaterial)
+            tabAppearance.backgroundColor = UIColor(Color.clear.opacity(0.2))
+            UITabBar.appearance().standardAppearance = tabAppearance
+            UITabBar.appearance().scrollEdgeAppearance = tabAppearance
+        }
     }
 }
 
@@ -46,6 +60,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-.previewInterfaceOrientation(.portrait)
+            .previewInterfaceOrientation(.portrait)
     }
 }
