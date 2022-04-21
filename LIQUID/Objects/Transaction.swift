@@ -16,6 +16,7 @@ struct Transaction: Identifiable, Codable {
     var notes: String
     var amount: Double
     var saving: Double
+    var appliedSavingsTo: [UUID]
     
     func formatDate(date: Date) -> String {
         let dateFormatter = DateFormatter()
@@ -49,6 +50,6 @@ struct filteredTransaction: Identifiable, Codable {
 }
 
 #if DEBUG
-let testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400, saving: 12.43)
+let testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400, saving: 12.43, appliedSavingsTo: [UUID()])
 let testFilteredTransaction = filteredTransaction(id: "0", type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400.09, saving: 34.21)
 #endif

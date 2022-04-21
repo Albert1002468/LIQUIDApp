@@ -16,26 +16,27 @@ struct JournalTab: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Image("Light Rain")
-                    .resizable()
-                    .ignoresSafeArea()
-                
-                List (transactionData.filteredSections) { section in
-                    Section(header: Text(transactionData.formatDate(date: section.date))
-                                .font(.body)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color.black)
-                                .textCase(nil)) {
-                        ForEach(section.transactionsOfMonth) { transaction in
-                            NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, amount: String(Int(transaction.amount*100)), type: transaction.type, date: section.date, cat: transaction.category, note: transaction.notes, desc: transaction.description, searchText: searchText, savings: transaction.saving, typeIndex: findTransactionType(type: transaction.type), category: transaction.category)
-                            ) {
-                                TransactionRow(transaction: transaction)
+                VStack (spacing: 0) {
+                 Image("Dark")
+                     .resizable()
+                     .ignoresSafeArea()
+
+                }
+                VStack {
+                    List (transactionData.filteredSections) { section in
+                        Section(header: Text(transactionData.formatDate(date: section.date))
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color.black)
+                            .textCase(nil)) {
+                                ForEach(section.transactionsOfMonth) { transaction in
+                                    NavigationLink(destination: TransactionDetail(transaction: transactionData.sections[getSectionIndex(sectID: section.id)].transactionsOfMonth[getTransactionIndex(sectID: section.id, transID: transaction.id)], transactionData: transactionData, searchText: searchText, typeIndex: findTransactionType(type: transaction.type), category: transaction.category, appendSavings: transaction.saving > 0.0 ? true : false)
+                                    ) {
+                                        TransactionRow(transaction: transaction)
+                                    }
+                                }
+                                .listRowBackground(Color.white.opacity(0.8))
                             }
-                            //  .listRowInsets(.init(top: 5, leading: 25, bottom: 5, trailing: 0))
-                            // .padding(.horizontal, 40)
-                            
-                        }
-                        .listRowBackground(Color.white.opacity(0.8))
                     }
                 }
             }
@@ -55,12 +56,12 @@ struct JournalTab: View {
                     } )
                 }
             }
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+        }
         .navigationViewStyle(.stack)
         .onChange(of: searchText) { searchText in
             transactionData.filterSections(searchText: searchText)
         }
-
     }
     
     func findTransactionType(type: String) -> Int {

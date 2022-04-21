@@ -26,7 +26,7 @@ struct SortDate: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Image("Black")
+                Image("Dark")
                     .resizable()
                     .ignoresSafeArea()
                 List {

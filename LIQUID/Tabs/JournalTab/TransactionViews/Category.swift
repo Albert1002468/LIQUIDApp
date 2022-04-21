@@ -37,7 +37,7 @@ struct Category: View {
                 .onMove(perform: onMove)
                 .listRowBackground(Color.white.opacity(0.9))
         }
-        .background(Image("Black")
+        .background(Image("Dark")
                         .resizable()
                        // .blur(radius: 10)
                        //.aspectRatio(contentMode: .fill)
@@ -57,7 +57,7 @@ struct Category: View {
                         }
                     }) {
                         Image(systemName: "plus")
-                    }.disabled(typeIndex == 1 && tempExpenseArray.count == 8)
+                    }.disabled(typeIndex == 1 && tempExpenseArray.count == 12)
                 }
             }.onAppear(perform: {
                 tempIncomeArray = transactionData.categoryIncomeArray

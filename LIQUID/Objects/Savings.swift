@@ -10,10 +10,11 @@ import Foundation
 struct Savings: Identifiable, Codable {
     var id = UUID()
     var amount: Double
-    var completed = 0.0
+    var completed: Double
     var desc: String
     var date: Date
-    var note: String
-    var saving: String
+    var saving: Double
+    var active: Bool
+    var previousAmountAdded: Double
 
 }

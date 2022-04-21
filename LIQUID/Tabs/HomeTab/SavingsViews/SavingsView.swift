@@ -10,15 +10,34 @@ import SwiftUI
 struct SavingsView: View {
     @ObservedObject var transactionData: TransactionModel
     @State var addSavings = false
+    @State var activeStatus = true
+    @Environment(\.dismiss) private var dismiss
     var body: some View {
-        ScrollView (.horizontal, showsIndicators: false) {
-            HStack (spacing: UIScreen.main.bounds.width * 0.18) {
+        ZStack {
+            Color("CustomBlue")
+                .ignoresSafeArea()
+            VStack {
+                Picker(selection: $activeStatus, label: Text("Active/Inactive")) {
+                    Text("Active").tag(true)
+                    Text("Inactive").tag(false)
+                }.pickerStyle(.segmented)
                 Spacer()
-                ForEach(transactionData.savingsArray) { savings in
-                    NavigationLink(destination: SavingsDetail(savings: savings, transactionData: transactionData)) {
-                        SavingsTank(percentage: savings.amount != 0.0 ? savings.completed/savings.amount : 0 , name: savings.desc)
+                ScrollView (.horizontal, showsIndicators: false) {
+                    HStack (spacing: UIScreen.main.bounds.width * 0.18) {
+                        Spacer()
+                        ForEach($transactionData.savingsArray) { $savings in
+                            if savings.active == activeStatus && savings.active == true {
+                                NavigationLink(destination: SavingsDetail(savings: $savings, transactionData: transactionData)) {
+                                    SavingsTank(savings: savings)
+                                }
+                            }
+                            else if savings.active == activeStatus && savings.active == false {
+                                SavingsTank(savings: savings)
+                            }
+                        }
                     }
                 }
+                Spacer()
             }
         }
         .navigationTitle("Savings")
@@ -33,6 +52,9 @@ struct SavingsView: View {
                     AddSavings(transactionData: transactionData)
                 })
             }
+        }
+        .onDisappear(){
+            dismiss()
         }
     }
 }

@@ -12,16 +12,14 @@ struct AddSavings: View {
     @Environment(\.dismiss) private var dismiss
     
     @State var amount = ""
-    @State var date = Date.now
-    @State var note = ""
     @State var desc = ""
-    @State var saving = "0"
+    @State var saving = 0.0
     var body: some View {
         NavigationView {
             ZStack {
-                 Image("Black")
-                   .resizable()
-                   .ignoresSafeArea()
+                Image("Dark")
+                    .resizable()
+                    .ignoresSafeArea()
                 
                 VStack {
                     Spacer()
@@ -37,28 +35,28 @@ struct AddSavings: View {
                     KeyPad(string: $amount)
                         .frame(width: UIScreen.main.bounds.size.width * 0.9, height: UIScreen.main.bounds.size.height * 0.3)
                         .padding()
-                    
-                    List {
-                        HStack {
-                            Text("Description")
-                            TextField("Enter Description", text: $desc)
-                                .keyboardType(.alphabet)
-                                .disableAutocorrection(true)
-                        }
+                    ZStack {
+                        Color("CustomBlue").opacity(0.6)
+                            .ignoresSafeArea()
                         
-                        Picker(selection: $saving, label: Text("Saving Amount")) {
-                            ForEach (0..<51, id:\.self) { percentage in
-                                Text("\(percentage * 2)%").tag(String("\(percentage * 2)"))
+                        List {
+                            HStack {
+                                Text("Description")
+                                TextField("Enter Description", text: $desc)
+                                    .keyboardType(.alphabet)
+                                    .disableAutocorrection(true)
+                                    .multilineTextAlignment(.trailing)
                             }
-                        }
-                        
-                        DatePicker("Completion Date", selection: $date, displayedComponents: .date)
-                        
-                        HStack {
-                            Text("Notes")
-                            TextField("Enter Note", text: $note)
-                                .keyboardType(.alphabet)
-                                .disableAutocorrection(true)
+                            
+                            HStack (spacing:3) {
+                                Text("Savings Amount")
+                                Spacer()
+                                TextField("Enter Savings Amount", value: $saving, formatter: NumberFormatter())
+                                    .keyboardType(.decimalPad)
+                                    .multilineTextAlignment(.trailing)
+                                Text("%")
+                                Spacer()
+                            }
                         }
                     }
                 }
@@ -71,14 +69,14 @@ struct AddSavings: View {
                     dismiss()
                 }) {
                     Text("Save")
-                }.disabled(desc.isEmpty || amount.isEmpty)
+                }.disabled(desc.isEmpty || amount.isEmpty || saving > 100.0 || transactionData.getTotalSaving(addNewSavings: saving/100, previousSavings: 0.0, savingsUsed: transactionData.getSavingsIDs()) > 1.0)
             }
         }
     }
     
     func AddNewSavings() {
-        let singleSavings = Savings(amount: (Double(amount) ?? 0.0), desc: desc, date: date, note: note, saving: saving)
-        transactionData.savingsArray.append(singleSavings)
+        let singleSavings = Savings(amount: (Double(amount) ?? 0.0), completed: 0.0, desc: desc, date: Date.now, saving: saving, active: true, previousAmountAdded: 0.0)
+        transactionData.savingsArray.insert(singleSavings, at: 0)
     }
 }
 

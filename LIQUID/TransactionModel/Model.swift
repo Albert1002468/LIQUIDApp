@@ -12,7 +12,7 @@ import SwiftUI
 class TransactionModel: ObservableObject {
     @Published var slices: [PieSlice] = []
     @Published var allMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    @Published var colors = [Color.blue, Color.yellow, Color.orange, Color.pink, Color.brown, Color.cyan, Color.mint, Color.purple]
+    @Published var colors = [Color.red, Color.pink, Color.orange, Color.yellow, Color.green, Color.mint, Color.teal, Color.cyan, Color.blue, Color.indigo, Color.purple, Color.brown]
     @Published var savingsArray = [Savings]() {
         didSet {
             if let encoded = try? JSONEncoder().encode(savingsArray) {
@@ -250,7 +250,7 @@ class TransactionModel: ObservableObject {
                 updateValues(section: section)
             }
         }
-        getNewCategories()        
+        getNewCategories()
     }
     
     func getNewCategories() {
@@ -334,15 +334,115 @@ class TransactionModel: ObservableObject {
         formatter.numberStyle = .currency
         return formatter.string(from: amount as NSNumber)!
     }
-    
-    func allocateSavings(amount: Double) -> Double {
+    /*
+     func removeSavingsFromTransactions(percentage : Double) {
+     var fullSavings = 0.0
+     for savings in 0..<savingsArray.count {
+     if (Double(savingsArray[savings].saving) ) > 0.0 {
+     fullSavings = fullSavings + savingsArray[savings].saving/100
+     }
+     }
+     for sectionIndex in 0..<sections.count {
+     for transactionIndex in 0..<sections[sectionIndex].transactionsOfMonth.count {
+     sections[sectionIndex].transactionsOfMonth[transactionIndex].saving = sections[sectionIndex].transactionsOfMonth[transactionIndex].saving * ((fullSavings-percentage)/fullSavings)
+     }
+     }
+     }
+     */
+    func allocateSavings(amount: Double) -> (Double, Bool, [UUID]) {
         var fullSavings = 0.0
+        var isActive = true
+        var newlyInactiveSavings: [UUID] = []
         for savings in 0..<savingsArray.count {
-            if (Int(savingsArray[savings].saving) ?? 0) > 0 {
-                fullSavings = fullSavings + (Double(savingsArray[savings].saving) ?? 0.0) * amount / 10000
-                savingsArray[savings].completed = savingsArray[savings].completed + (Double(savingsArray[savings].saving) ?? 0.0) * amount / 10000
+            if savingsArray[savings].active {
+                let individualSavings = savingsArray[savings].saving * amount / 10000
+                if savingsArray[savings].amount > savingsArray[savings].completed + individualSavings {
+                    savingsArray[savings].completed += individualSavings
+                    fullSavings += individualSavings
+                    savingsArray[savings].previousAmountAdded = individualSavings
+                } else {
+                    fullSavings += savingsArray[savings].amount - savingsArray[savings].completed
+                    savingsArray[savings].previousAmountAdded = savingsArray[savings].amount - savingsArray[savings].completed
+                    savingsArray[savings].completed += savingsArray[savings].previousAmountAdded
+                    isActive = false
+                    newlyInactiveSavings.append(savingsArray[savings].id)
+                }
+            }
+        }
+        return (fullSavings, isActive, newlyInactiveSavings)
+    }
+    
+    func changeSavings(amount: Double, savingsUsed: [UUID]) {
+        for savings in 0..<savingsArray.count {
+            if savingsUsed.contains(savingsArray[savings].id) {
+                let individualSavings = savingsArray[savings].saving * amount / 10000
+                if savingsArray[savings].amount > savingsArray[savings].completed + individualSavings - savingsArray[savings].previousAmountAdded {
+                    savingsArray[savings].completed += individualSavings - savingsArray[savings].previousAmountAdded
+                    savingsArray[savings].previousAmountAdded = individualSavings
+                    
+                } else {
+                    savingsArray[savings].previousAmountAdded = savingsArray[savings].amount - savingsArray[savings].completed + savingsArray[savings].previousAmountAdded
+                    savingsArray[savings].completed += savingsArray[savings].amount - savingsArray[savings].completed
+                    savingsArray[savings].active = false
+                    
+                }
+            }
+        }
+    }
+    
+    func getSavingsPercent(amount: Double, savingsUsed: [UUID]) -> Double {
+        var fullSavings = 0.0
+        for savings in savingsArray {
+            if savingsUsed.contains(savings.id) {
+                let individualSavings = savings.saving * amount / 10000
+                if savings.amount > savings.completed + individualSavings - savings.previousAmountAdded {
+                    fullSavings += individualSavings
+                } else {
+                    fullSavings += savings.amount - savings.completed + savings.previousAmountAdded
+                }
             }
         }
         return fullSavings
+    }
+    
+    func getTotalSaving(addNewSavings: Double, previousSavings: Double, savingsUsed: [UUID]) -> Double {
+        var totalSaving = addNewSavings - previousSavings
+        for savings in savingsArray {
+            if (savings.active && savings.saving > 0.0 && savingsUsed.contains(savings.id)) {
+                totalSaving += savings.saving/100
+            }
+        }
+        return totalSaving
+    }
+    
+    func getSavingsIDs() -> [UUID] {
+        var savingsIDs:[UUID] = []
+        for savings in savingsArray {
+            if savings.active {
+                savingsIDs.append(savings.id)
+            }
+        }
+        return savingsIDs
+    }
+    
+    func activeSavings() -> Bool {
+        var active = false
+        for savings in savingsArray {
+            if savings.active == true {
+                active = true
+                break
+            }
+        }
+        return active
+    }
+    
+    func changeSavingstoInactive(accounts: [UUID]) {
+        for savingsID in 0..<accounts.count {
+            for savingsIndex in 0..<savingsArray.count {
+                if savingsArray[savingsIndex].id == accounts[savingsID] {
+                    savingsArray[savingsIndex].active = false
+                }
+            }
+        }
     }
 }

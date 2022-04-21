@@ -19,6 +19,7 @@ struct PieSliceView: View {
                 let height = width
                 
                 let center = CGPoint(x: width * 0.5, y: height * 0.5)
+                
                 Path { path in
                     path.move(to: center)
                     
@@ -32,7 +33,19 @@ struct PieSliceView: View {
                 }
                 .fill(pieSlice.color)
                 
-                // .border(pieSlice.color.brightness(-0.5), width: 4)
+                Path { path in
+                    path.move(to: center)
+                    
+                    path.addArc(
+                        center: center,
+                        radius: width * 0.5,
+                        startAngle: Angle(degrees: -90.0) + pieSlice.startAngle,
+                        endAngle: Angle(degrees: -90.0) + pieSlice.endAngle,
+                        clockwise: false)
+                    
+                }
+                .stroke(Color(hue: 1.0, saturation: 0.0, brightness: 0.664), lineWidth: 1)
+
                 if (pieSlice.endAngle-pieSlice.startAngle > Angle(degrees: 10.12)) {
                     Text(pieSlice.text)
                         .position (

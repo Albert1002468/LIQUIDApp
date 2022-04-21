@@ -8,39 +8,48 @@
 import SwiftUI
 
 struct SavingsTank: View {
-    @State var percentage: Double
-    @State var name: String
+    @State var transactionData = TransactionModel()
+    @State var savings: Savings
     var body: some View {
-        
-            VStack {
-                Text ("")
-                    .padding()
-                    .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.6)
-                    .background (
-                        GeometryReader { geometry in
-                            ZStack (alignment: .center){
-                                ZStack(alignment: .bottom) {
-                                    Rectangle()
-                                        .foregroundColor(Color("TiffanyBlue"))
-                                        .frame(width: geometry.size.width, height: geometry.size.height * percentage)
-                                    RoundedRectangle(cornerRadius: 40)
-                                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                                        .foregroundColor(.white)
-                                }
-                                Text("\(String(format: "%.1f", percentage*100))%")
-                                
-                            }
-                        }
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 40))
-                
-                Text(name)
+        VStack {
+            if savings.active == false {
+                Text("Completed on \(transactionData.formatDate(date: savings.date))")
             }
+            Text ("")
+                .padding()
+                .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.6)
+                .background (
+                    GeometryReader { geometry in
+                        ZStack (alignment: .center) {
+                            ZStack(alignment: .bottom) {
+                                
+                                RoundedRectangle(cornerRadius: 40)
+                                    .fill(.white)
+                                Rectangle()
+                                    .foregroundColor(Color("TiffanyBlue"))
+                                    .frame(width: geometry.size.width, height: geometry.size.height * savings.completed/savings.amount)
+                            }
+                            RoundedRectangle(cornerRadius: 40)
+                                .stroke(Color.gray, lineWidth: 10)
+                            if savings.active == true {
+                            Text("\(String(format: "%.1f", savings.completed/savings.amount*100))%")
+                            } else {
+                                Text("Saved \(transactionData.formatCurrency(amount: savings.completed))")
+                            }
+                            
+                        }
+                    }
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 40))
+            
+            Text(savings.desc)
+        }
     }
 }
 
 struct SavingsTank_Previews: PreviewProvider {
+    @State static var saving = Savings(amount: 200000.0, completed: 150000.0, desc: "Savings", date: Date.now, saving: 2.0, active: false, previousAmountAdded: 25.30)
     static var previews: some View {
-        SavingsTank(percentage: 0.2, name: "Rainy Day Funds")
+        SavingsTank(savings: saving)
     }
 }

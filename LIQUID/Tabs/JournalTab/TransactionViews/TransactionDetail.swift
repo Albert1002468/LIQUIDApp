@@ -12,23 +12,25 @@ struct TransactionDetail: View {
     @ObservedObject var transactionData: TransactionModel
     @Environment(\.dismiss) private var dismiss
     let paymentTypeArray = ["Income", "Expense"]
-    @State var amount: String
-    @State var type: String
-    @State var date: Date
-    @State var cat: String
-    @State var note: String
-    @State var desc: String
+    @State var amount = ""
+    @State var type = ""
+    @State var date = Date.now
+    @State var cat = ""
+    @State var note = ""
+    @State var desc = ""
     @State var searchText: String
-    @State var savings: Double
+    @State var savings = 0.0
     @State var typeIndex: Int
     @State var category: String
     @State var isShowingDeleteConfirmation = false
     @State var hasOptions = false
     @State var descriptions: [String] = []
     @State var tempDesc = ""
+    @State var previousAmount = 0.0
+    @State var appendSavings: Bool
     var body: some View {
         ZStack {
-            Image("Black")
+            Image("Dark")
                 .resizable()
                 .ignoresSafeArea()
             
@@ -48,8 +50,8 @@ struct TransactionDetail: View {
                     .padding()
                 
                 ZStack {
-                    Color(.gray).opacity(0.6)
-                        .ignoresSafeArea()
+                    Color("CustomBlue").opacity(0.6)
+                    
                     if !hasOptions {
                         List {
                             Section {
@@ -58,12 +60,9 @@ struct TransactionDetail: View {
                                         Text(paymentTypeArray[$0])
                                     }
                                 }.pickerStyle(.segmented)
-                                                                
+                                
                                 HStack {
                                     Text("Description")
-                                    TextField("Enter Description", text: $desc)
-                                        .keyboardType(.alphabet)
-                                        .disableAutocorrection(true)
                                     Button(action: {
                                         withAnimation(){
                                             self.hasOptions.toggle()
@@ -71,30 +70,54 @@ struct TransactionDetail: View {
                                     }) {
                                         Image(systemName: "magnifyingglass")
                                     }
+                                    TextField("Enter Description", text: $desc)
+                                        .keyboardType(.alphabet)
+                                        .disableAutocorrection(true)
+                                        .multilineTextAlignment(.trailing)
                                 }
-                                                                
+                                
                                 DatePicker("Date", selection: $date, displayedComponents: .date)
-                                                                
+                                
                                 NavigationLink(destination: Category(transactionData: transactionData, typeIndex: typeIndex, category: $category)) {
                                     HStack {
                                         Text(typeIndex == 0 ? "Select Income Category" : "Select Expense Category").foregroundColor(.black).multilineTextAlignment(.leading)
                                         Spacer()
                                         if (typeIndex == 0 ? transactionData.categoryIncomeArray.contains(category) : transactionData.categoryExpenseArray.contains(category)) {
-                                                Text(category)
-                                            .foregroundColor(.gray)
+                                            Text(category)
+                                                .foregroundColor(.gray)
                                             
                                         } else {
-                                                Text(typeIndex == 0 ? transactionData.categoryIncomeArray[0] : transactionData.categoryExpenseArray[0])
+                                            Text(typeIndex == 0 ? transactionData.categoryIncomeArray[0] : transactionData.categoryExpenseArray[0])
                                             
                                         }
                                     }
                                 }
-                                Text("Amount Going Towards Savings: \(transactionData.formatCurrency(amount: transaction.saving))")
+                                if (typeIndex == 0) {
+                                    Toggle("Apply Savings?",isOn: $appendSavings)
+                                        .onChange(of: appendSavings) { _ in
+                                            savings = transactionData.getSavingsPercent(amount: appendSavings ? Double(amount) ?? 0.0 : 0.0, savingsUsed: transaction.appliedSavingsTo)
+                                        }
+                                }
+                                
+                                HStack {
+                                    Text("Applied to Savings:")
+                                    Spacer()
+                                    Text(transactionData.formatCurrency(amount: savings))
+                                        .multilineTextAlignment(.trailing)
+                                        .onChange(of: amount) { _ in
+                                            if appendSavings {
+                                                savings = transactionData.getSavingsPercent(amount: Double(amount) ?? 0.0, savingsUsed: transaction.appliedSavingsTo)
+                                            }
+                                        }
+                                }
+                                
                                 HStack {
                                     Text("Notes")
                                     TextField("Enter Note", text: $note)
                                         .keyboardType(.alphabet)
                                         .disableAutocorrection(true)
+                                        .multilineTextAlignment(.trailing)
+
                                 }
                             }
                             
@@ -105,6 +128,9 @@ struct TransactionDetail: View {
                                 }.foregroundColor(.white)
                                     .confirmationDialog("Are You Sure?", isPresented: $isShowingDeleteConfirmation, titleVisibility: .visible) {
                                         Button("Delete", role: .destructive) {
+                                            if appendSavings {
+                                                transactionData.changeSavings( amount: 0.0, savingsUsed: transaction.appliedSavingsTo)
+                                            }
                                             deleteTransaction()
                                             transactionData.filterSections(searchText: searchText)
                                             dismiss()
@@ -137,7 +163,7 @@ struct TransactionDetail: View {
                                 tempDesc.isEmpty ? true : $0.localizedCaseInsensitiveContains(tempDesc)
                             }, id: \.self) { description in
                                 HStack {
-                                Text(description)
+                                    Text(description)
                                     Spacer()
                                 }.contentShape(Rectangle())
                                     .onTapGesture {
@@ -149,7 +175,6 @@ struct TransactionDetail: View {
                             }
                         }.onAppear(perform: {
                             tempDesc = ""
-                            descriptions = transactionData.removeDuplicateDescriptions()
                         })
                         .transition(.move(edge: .trailing))
                     }
@@ -161,6 +186,7 @@ struct TransactionDetail: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
+                    transactionData.changeSavings(amount: appendSavings ? Double(amount) ?? 0.0 : 0.0, savingsUsed: transaction.appliedSavingsTo)
                     UpdateTransaction()
                     transactionData.sortSections()
                     transactionData.filterSections(searchText: searchText)
@@ -174,6 +200,14 @@ struct TransactionDetail: View {
         }
         .onAppear(perform: {
             descriptions = transactionData.removeDuplicateDescriptions()
+            amount = String(Int(transaction.amount*100))
+            type = transaction.type
+            date = transaction.date
+            cat = transaction.category
+            note = transaction.notes
+            desc = transaction.description
+            savings = transaction.saving
+            previousAmount = savings
         })
     }
     
@@ -197,7 +231,7 @@ struct TransactionDetail: View {
                 cat = transactionData.categoryExpenseArray[0]
             }
         }
-        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100, saving: savings)
+        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100, saving: savings, appliedSavingsTo: transaction.appliedSavingsTo)
         if transaction.formatDate(date: date) != transaction.formatDate(date: transaction.date) {
             for arrayDate in transactionData.sections
             {
@@ -208,18 +242,16 @@ struct TransactionDetail: View {
                 index += 1
             }
             if found == true {
-                transactionData.sections[index].transactionsOfMonth.append(singleTransaction)
-                deleteTransaction()
+                transactionData.sections[index].transactionsOfMonth.insert(singleTransaction, at: 0)
             }
             else {
                 transactionData.sections.append(Day(date: date, transactionsOfMonth: [singleTransaction]))
-                deleteTransaction()
             }
         }
         else {
-            transactionData.sections[getSectionIndex()].transactionsOfMonth.append(singleTransaction)
-            deleteTransaction()
+            transactionData.sections[getSectionIndex()].transactionsOfMonth.insert(singleTransaction, at: getTransactionIndex())
         }
+        deleteTransaction()
     }
     
     func getSectionIndex() -> Int {
@@ -249,8 +281,8 @@ struct TransactionDetail: View {
 }
 
 struct TransactionDetail_Previews: PreviewProvider {
-    @State static var testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400, saving: 12.3)
+    @State static var testTransaction = Transaction(type: "Income", date: Date.now, description: "Porter's Paycheck", category: "Direct Deposit", notes: "First of the month", amount: 400, saving: 12.3, appliedSavingsTo: [UUID()])
     static var previews: some View {
-        TransactionDetail(transaction: testTransaction, transactionData: TransactionModel(), amount: "400", type: testTransaction.type, date: testTransaction.date, cat: testTransaction.category, note: testTransaction.notes, desc: testTransaction.description, searchText: "", savings: 2.32, typeIndex: 0, category: "Direct Deposit")
+        TransactionDetail(transaction: testTransaction, transactionData: TransactionModel(), amount: "400", type: testTransaction.type, date: testTransaction.date, cat: testTransaction.category, note: testTransaction.notes, desc: testTransaction.description, searchText: "", savings: 2.32, typeIndex: 0, category: "Direct Deposit", appendSavings: false)
     }
 }

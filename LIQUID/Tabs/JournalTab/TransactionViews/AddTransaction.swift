@@ -27,12 +27,16 @@ struct AddTransaction: View {
     @State var typeIndex = 0
     @State var category = ""
     @State var hasOptions = false
+    @State var showingSavingsAlert = false
+    @State var appendSavings = false
     @State var descriptions: [String] = []
     @State var tempDesc = ""
+    @State var isActive = true
+    @State var newlyInactiveSavings: [UUID] = []
     var body: some View {
         NavigationView {
             ZStack {
-                Image("Black")
+                Image("Dark")
                     .resizable()
                     .ignoresSafeArea()
                 
@@ -51,8 +55,9 @@ struct AddTransaction: View {
                         .frame(width: UIScreen.main.bounds.size.width * 0.9, height: UIScreen.main.bounds.size.height * 0.3)
                         .padding()
                     ZStack {
-                        Color(.gray).opacity(0.6)
+                        Color("CustomBlue").opacity(0.6)
                             .ignoresSafeArea()
+                        
                         if !hasOptions {
                             List {
                                 Picker(selection: $typeIndex, label: Text("Select Transaction Type")) {
@@ -63,16 +68,17 @@ struct AddTransaction: View {
                                 
                                 HStack {
                                     Text("Description")
-                                    TextField("Enter Description", text: $desc)
-                                        .keyboardType(.alphabet)
-                                        .disableAutocorrection(true)
                                     Button(action: {
                                         withAnimation(){
                                             self.hasOptions.toggle()
                                         }
                                     }) {
                                         Image(systemName: "magnifyingglass")
-                                    }
+                                    }.disabled (descriptions.isEmpty)
+                                    TextField("Enter Description", text: $desc)
+                                        .keyboardType(.alphabet)
+                                        .disableAutocorrection(true)
+                                        .multilineTextAlignment(.trailing)
                                 }
                                 
                                 
@@ -96,6 +102,7 @@ struct AddTransaction: View {
                                     TextField("Enter Note", text: $note)
                                         .keyboardType(.alphabet)
                                         .disableAutocorrection(true)
+                                        .multilineTextAlignment(.trailing)
                                 }
                                 
                             }.transition(.move(edge: .leading))
@@ -123,7 +130,7 @@ struct AddTransaction: View {
                                     tempDesc.isEmpty ? true : $0.localizedCaseInsensitiveContains(tempDesc)
                                 }, id: \.self) { description in
                                     HStack {
-                                    Text(description)
+                                        Text(description)
                                         Spacer()
                                     }.contentShape(Rectangle())
                                         .onTapGesture {
@@ -135,7 +142,6 @@ struct AddTransaction: View {
                                 }
                             }.onAppear(perform: {
                                 tempDesc = ""
-                                descriptions = transactionData.removeDuplicateDescriptions()
                             })
                             .transition(.move(edge: .trailing))
                         }
@@ -146,15 +152,41 @@ struct AddTransaction: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 Button(action: {
-                    savings = transactionData.allocateSavings(amount: Double(amount) ?? 0.0)
-                    AddNewTransaction()
-                    transactionData.sortSections()
-                    transactionData.filterSections(searchText: "")
-                    dismiss()
+                    if (typeIndex == 0 && transactionData.activeSavings()) {
+                        showingSavingsAlert.toggle()
+                    } else {
+                        AddNewTransaction()
+                        transactionData.sortSections()
+                        transactionData.filterSections(searchText: "")
+                        dismiss()
+                    }
                 }) {
                     Text("Save")
                 }.disabled(desc.isEmpty || amount.isEmpty)
+                    .alert("Add Savings?", isPresented:$showingSavingsAlert, presenting: appendSavings) { _ in
+                            Button("Yes") {
+                                appendSavings = true
+                                (savings, isActive, newlyInactiveSavings) = transactionData.allocateSavings(amount: Double(amount) ?? 0.0)
+                                AddNewTransaction()
+                                if isActive == false {
+                                    transactionData.changeSavingstoInactive(accounts: newlyInactiveSavings)
+                                }
+                                transactionData.sortSections()
+                                transactionData.filterSections(searchText: "")
+                                dismiss()
+                            }
+                            Button("No") {
+                                appendSavings = false
+                                AddNewTransaction()
+                                transactionData.sortSections()
+                                transactionData.filterSections(searchText: "")
+                                dismiss()
+                            }
+                    }
             }
+            .onAppear(perform: {
+                descriptions = transactionData.removeDuplicateDescriptions()
+            })
         }
     }
     
@@ -185,9 +217,9 @@ struct AddTransaction: View {
                 cat = transactionData.categoryExpenseArray[0]
             }
         }
-        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100, saving: savings)
+        let singleTransaction = Transaction(type: type, date: date, description: desc, category: cat, notes: note, amount: (Double(amount) ?? 0.0)/100, saving: savings, appliedSavingsTo: transactionData.getSavingsIDs())
         if found == true {
-            transactionData.sections[index].transactionsOfMonth.append(singleTransaction)
+            transactionData.sections[index].transactionsOfMonth.insert(singleTransaction, at: 0)
         }
         else {
             transactionData.sections.append(Day(date: date, transactionsOfMonth: [singleTransaction]))

@@ -37,25 +37,28 @@ struct ContentView: View {
         }
 
         .onAppear {
-            UITableView.appearance().backgroundColor = UIColor.clear
+            self.initialize()
+        }
+    }
 
+    func initialize() {
+            UITableView.appearance().backgroundColor = .clear
+            //UITableViewCell.appearance().backgroundColor = .clear
+            //UITableView.appearance().tableFooterView = UIView()
+        
             let appearance = UINavigationBarAppearance()
             appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-            appearance.backgroundColor = UIColor(Color.clear.opacity(0.2))
+            appearance.backgroundColor = UIColor(Color.clear.opacity(0.8))
             UINavigationBar.appearance().standardAppearance = appearance
             UINavigationBar.appearance().standardAppearance = appearance
             
             let tabAppearance = UITabBarAppearance()
-            tabAppearance.backgroundEffect = UIBlurEffect(style: .systemThickMaterial)
-            tabAppearance.backgroundColor = UIColor(Color.clear.opacity(0.2))
+            tabAppearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+            tabAppearance.backgroundColor = UIColor(Color.clear.opacity(0.8))
             UITabBar.appearance().standardAppearance = tabAppearance
             UITabBar.appearance().scrollEdgeAppearance = tabAppearance
-        }
-    }
+     }
 }
-
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

@@ -21,16 +21,19 @@ struct HomeTab: View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
-                     Image("Light Rain")
-                         .resizable()
-                         .ignoresSafeArea()
+                    VStack (spacing: 0) {
+                        Image("Dark")
+                            .resizable()
+                            .ignoresSafeArea()
+                    }
                     VStack {
                         HStack {
                             Spacer()
                             ZStack {
+                                
                                 Circle()
-                                    .fill(Color("TiffanyBlue"))
-                                    .frame(width: geometry.size.width * 1.3 * innerRadiusFraction, height: geometry.size.width * 1.3 * innerRadiusFraction)
+                                    .fill(Color("CustomBlue").opacity(0.4))
+                                    .frame(width: geometry.size.width * 1.335 * innerRadiusFraction, height: geometry.size.width * 1.335 * innerRadiusFraction)
                                     .shadow(color: transactionData.categoryExpenseValues.reduce(0, +) > transactionData.categoryIncomeValues.reduce(0, +) ? .red : Color("TiffanyBlue"), radius: 50)
                                 
                                 ForEach(transactionData.slices) { slice in
@@ -39,38 +42,45 @@ struct HomeTab: View {
                                 .frame(width: geometry.size.width * 0.8, height: geometry.size.width * 0.8)
                                 
                                 Circle()
-                                    .fill(Color(UIColor.systemBackground))
-                                    .frame(width: geometry.size.width * 0.8 * innerRadiusFraction, height: geometry.size.width * 0.8 * innerRadiusFraction)
-                                //.shadow(color: .black, radius: 10)
-                                
+                                    .stroke(Color(hue: 1.0, saturation: 0.0, brightness: 0.664), lineWidth: 2)
+                                    .background(.clear)
+                                    .frame(width: geometry.size.width * 1.335 * innerRadiusFraction, height: geometry.size.width * 1.335 * innerRadiusFraction)
                                 
                                 Circle()
-                                    .fill(.white)
+                                    .fill(RadialGradient(gradient: .init(colors: [.white, transactionData.categoryExpenseValues.reduce(0, +) > transactionData.categoryIncomeValues.reduce(0, +) ? .red : Color("TiffanyBlue")]), center: .center, startRadius: 50, endRadius: 200))
                                     .frame(width: geometry.size.width * 0.8 * innerRadiusFraction, height: geometry.size.width * 0.8 * innerRadiusFraction)
-                                //.shadow(color: .black, radius: 10)
                                 
-                                VStack {
-                                    Text(transactionData.formatCurrency(amount: transactionData.categoryExpenseValues.reduce(0, +)) + " /")
-                                        .font(.largeTitle)
+                                Circle()
+                                    .stroke(Color(hue: 1.0, saturation: 0.0, brightness: 0.664), lineWidth: 2)
+                                    .frame(width: geometry.size.width * 0.8 * innerRadiusFraction, height: geometry.size.width * 0.8 * innerRadiusFraction)
+                                
+                                VStack (spacing: 0) {
+                                    Text(transactionData.formatCurrency(amount: transactionData.categoryExpenseValues.reduce(0, +)))
+                                        .fontWeight(.ultraLight)
+                                        .font(.system(size: transactionData.categoryExpenseValues.reduce(0, +) >= 100000 ? geometry.size.width * 0.06 : geometry.size.width * 0.07))
+                                    
+                                    Divider()
+                                        .background(.black)
+                                        .frame(width: geometry.size.width * 0.4)
+                                    
                                     Text(transactionData.formatCurrency(amount: transactionData.categoryIncomeValues.reduce(0, +)))
-                                        .font(.largeTitle)
+                                        .fontWeight(.medium)
+                                        .font(.system(size: transactionData.categoryIncomeValues.reduce(0, +) >= 100000 ? geometry.size.width * 0.06 : geometry.size.width * 0.07))
                                 }
                             }
                             Spacer()
                         }
-                        //ScrollView (showsIndicators: false) {
                         List {
                             ForEach (0..<transactionData.filteredCategoryExpenseArray.count, id: \.self) { index in
-                                PieChartRow(color: transactionData.colors[index], name: transactionData.filteredCategoryExpenseArray[index], value: transactionData.formatCurrency(amount: transactionData.categoryExpenseValues[index]), percent: transactionData.categoryExpenseValues[index] / getSum() * 100).listRowSeparator(.hidden)
-                            }.listRowBackground(Color.white.opacity(0.8))
-
-                       // }.padding()
+                                PieChartRow(color: transactionData.colors[index], name: transactionData.filteredCategoryExpenseArray[index], value: transactionData.formatCurrency(amount: transactionData.categoryExpenseValues[index]), percent: transactionData.categoryExpenseValues[index] / getSum() * 100)
+                                    .listRowSeparator(.hidden)
+                                
+                            }
+                            .listRowBackground(Color.white.opacity(0.8))
                         }
                     }
                 }
             }
-            .navigationTitle("LIQUID")
-            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
@@ -85,7 +95,7 @@ struct HomeTab: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     
                     NavigationLink(destination: SavingsView(transactionData: transactionData)) {
-                            Text("Savings")
+                        Text("Savings")
                     }
                 }
             }
@@ -96,13 +106,12 @@ struct HomeTab: View {
                 secondMonth = month
                 secondYear = year
                 transactionData.updateCategoryValues(month: month, year: year, secondMonth: secondMonth, secondYear: secondYear, type: sortType)
-                //transactionData.updateCategoryValues()
                 transactionData.getSlices()
             })
         }
     }
     
-    func getSum() -> Double{
+    func getSum() -> Double {
         var sum = 0.0
         if transactionData.categoryIncomeValues.reduce(0, +) >= transactionData.categoryExpenseValues.reduce(0, +) {
             sum = transactionData.categoryIncomeValues.reduce(0, +)
