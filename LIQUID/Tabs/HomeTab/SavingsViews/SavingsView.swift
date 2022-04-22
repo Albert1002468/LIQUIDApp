@@ -28,11 +28,11 @@ struct SavingsView: View {
                         ForEach($transactionData.savingsArray) { $savings in
                             if savings.active == activeStatus && savings.active == true {
                                 NavigationLink(destination: SavingsDetail(savings: $savings, transactionData: transactionData)) {
-                                    SavingsTank(savings: savings)
+                                    SavingsTank(savings: $savings)
                                 }
                             }
                             else if savings.active == activeStatus && savings.active == false {
-                                SavingsTank(savings: savings)
+                                SavingsTank(savings: $savings)
                             }
                         }
                     }

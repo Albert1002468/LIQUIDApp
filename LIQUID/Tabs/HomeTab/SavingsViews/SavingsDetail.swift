@@ -14,7 +14,6 @@ struct SavingsDetail: View {
     @State var isShowingDiscontinueConfirmation = false
     @State var amount = ""
     @State var desc = ""
-    @State var completed = 0.0
     @State var active = true
     var body: some View {
         ZStack {
@@ -53,7 +52,7 @@ struct SavingsDetail: View {
                             HStack {
                                 Text("Completed")
                                 Spacer()
-                                Text(transactionData.formatCurrency(amount: completed))
+                                Text(transactionData.formatCurrency(amount: savings.completed))
                             }
                             
                             HStack {
@@ -81,13 +80,11 @@ struct SavingsDetail: View {
                 }
             }
         }
-        
         .navigationTitle("Edit Savings")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: {
             amount = String(Int(savings.amount))
             desc = savings.desc
-            completed = savings.completed
             active = savings.active
         })
         .toolbar {
@@ -96,12 +93,15 @@ struct SavingsDetail: View {
                 dismiss()
             }) {
                 Text("Save")
-            }.disabled(desc.isEmpty || amount.isEmpty)
+            }.disabled(desc.isEmpty || amount.isEmpty || savings.completed > Double(amount) ?? 0.0)
         }
     }
     
     func updateSavings() {
         savings.amount = Double(amount) ?? 0.0
+        if savings.completed == savings.amount {
+            savings.active = false
+        }
         savings.desc = desc
     }
 }

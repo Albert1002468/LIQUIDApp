@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SavingsTank: View {
     @State var transactionData = TransactionModel()
-    @State var savings: Savings
+    @Binding var savings: Savings
     var body: some View {
         VStack {
             if savings.active == false {
@@ -50,6 +50,6 @@ struct SavingsTank: View {
 struct SavingsTank_Previews: PreviewProvider {
     @State static var saving = Savings(amount: 200000.0, completed: 150000.0, desc: "Savings", date: Date.now, saving: 2.0, active: false, previousAmountAdded: 25.30)
     static var previews: some View {
-        SavingsTank(savings: saving)
+        SavingsTank(savings: $saving)
     }
 }
